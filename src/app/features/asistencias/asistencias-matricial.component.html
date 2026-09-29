@@ -1,0 +1,164 @@
+<div class="flex flex-wrap items-center gap-2 mb-3">
+  <app-back-button />
+  <h1 class="flex-1 min-w-52">Asistencias</h1>
+</div>
+
+<mat-card class="mb-3">
+  <mat-card-content class="compact-content flex flex-wrap items-center gap-2">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Período</mat-label>
+      <mat-select [formControl]="fPeriodo" (selectionChange)="aplicarFiltros()">
+        @for (p of periodos(); track p.id) {
+          <mat-option [value]="p.id">{{ p.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="filter-field-wide">
+      <mat-label>Sección</mat-label>
+      <mat-select [formControl]="fSeccion" (selectionChange)="aplicarFiltros()">
+        @for (s of secciones(); track s.id) {
+          <mat-option [value]="s.id">{{ s.grado?.nombre }} {{ s.nombre }} ({{ s.turno }})</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Mes</mat-label>
+      <input matInput type="month" [formControl]="fMes" (change)="aplicarFiltros()" />
+    </mat-form-field>
+  </mat-card-content>
+</mat-card>
+
+@if (loading()) {
+  <div class="flex justify-center py-16">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+} @else if (!seccion()) {
+  <mat-card>
+    <mat-card-content class="empty-state">
+      <mat-icon class="empty-icon">fact_check</mat-icon>
+      <p><strong>Selecciona una sección y un mes</strong></p>
+      <p>Elige los filtros de arriba para ver la grilla mensual de asistencia.</p>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  <div class="flex flex-wrap items-center gap-2 mb-3">
+    <h2 class="capitalize flex-1 min-w-52">
+      {{ seccion()?.grado?.nombre }} {{ seccion()?.nombre }} — {{ tituloMes() }}
+    </h2>
+    <button mat-stroked-button type="button" (click)="exportarExcel()" matTooltip="Exportar a Excel">
+      <mat-icon>table_view</mat-icon>
+      <span>Excel</span>
+    </button>
+    <button mat-stroked-button type="button" (click)="exportarPdf()" matTooltip="Exportar a PDF">
+      <mat-icon>picture_as_pdf</mat-icon>
+      <span>PDF</span>
+    </button>
+    <button mat-raised-button color="primary" type="button" (click)="guardar()" [disabled]="!cambios() || saving()">
+      @if (saving()) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        <mat-icon>save</mat-icon>
+      }
+      <span>Guardar ({{ cambios() }})</span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+    <mat-card class="stat-chip stat-p">
+      <mat-card-content><strong>{{ stats().presente }}</strong><span>Presentes</span></mat-card-content>
+    </mat-card>
+    <mat-card class="stat-chip stat-a">
+      <mat-card-content><strong>{{ stats().ausente }}</strong><span>Ausentes</span></mat-card-content>
+    </mat-card>
+    <mat-card class="stat-chip stat-t">
+      <mat-card-content><strong>{{ stats().tardia }}</strong><span>Tardías</span></mat-card-content>
+    </mat-card>
+    <mat-card class="stat-chip stat-j">
+      <mat-card-content><strong>{{ stats().justificado }}</strong><span>Justificados</span></mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="table-wrap" [class.bloqueada]="saving()">
+    <mat-card-content>
+      <div class="overflow-auto">
+        <table class="grilla">
+          <thead>
+            <tr>
+              <th class="sticky-col head">N°</th>
+              <th class="sticky-col-2 head">DNI / Alumno</th>
+              @for (d of dias; track d.fecha) {
+                <th class="dia head" [matTooltip]="d.fecha">{{ d.num }}<small>{{ d.dow }}</small></th>
+              }
+              <th class="head resumen">P</th>
+              <th class="head resumen">A</th>
+              <th class="head resumen">T</th>
+              <th class="head resumen">J</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of filas(); track f.matricula.id; let fi = $index) {
+              <tr>
+                <td class="sticky-col">{{ fi + 1 }}</td>
+                <td class="sticky-col-2 alumno">
+                  <small class="dni">{{ f.matricula.estudiante?.dni }}</small>
+                  <span>{{ nombreAlumno(f) }}</span>
+                </td>
+                @for (c of f.celdas; track $index; let di = $index) {
+                  <td
+                    class="celda est-{{ c || 'vacia' }}"
+                    [class.cambiada]="c !== (guardadoInicial.get(f.matricula.id + '|' + dias[di].fecha)?.estado ?? '')"
+                    [class.j-pendiente]="jPendiente(fi, di)"
+                    [class.enfocada]="foco()?.f === fi && foco()?.d === di"
+                    [attr.data-celda]="fi + '-' + di"
+                    tabindex="0"
+                    role="button"
+                    [attr.aria-label]="nombreAlumno(f) + ' ' + dias[di].fecha + (jPendiente(fi, di) ? ' (justificativo pendiente)' : '')"
+                    [matTooltip]="jPendiente(fi, di) ? 'Justificado sin motivo: clic derecho para registrarlo' : (nombreAlumno(f) + ' — ' + dias[di].fecha)"
+                    (click)="ciclar(fi, di, $event.shiftKey)"
+                    (contextmenu)="abrirMenu(fi, di, $event.clientX, $event.clientY); $event.preventDefault()"
+                    (keydown)="onKey(fi, di, $event)"
+                    (focus)="foco.set({ f: fi, d: di })"
+                  >{{ letra(c) }}</td>
+                }
+                <td class="resumen rp">{{ f.resumen.presente }}</td>
+                <td class="resumen ra">{{ f.resumen.ausente }}</td>
+                <td class="resumen rt">{{ f.resumen.tardia }}</td>
+                <td class="resumen rj">{{ f.resumen.justificado }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (menu(); as m) {
+    <div class="menu-overlay" (click)="cerrarMenu()" (keydown.escape)="cerrarMenu()" tabindex="-1">
+      <div
+        class="menu-ctx"
+        role="menu"
+        aria-label="Marcar asistencia"
+        [style.left.px]="m.x"
+        [style.top.px]="m.y"
+        (click)="$event.stopPropagation()"
+        (keydown)="menuKey($event)"
+      >
+        <button type="button" class="menu-opcion" role="menuitem" (click)="opcionMenu('presente')">
+          <span class="dot dot-p">P</span><span>Presente</span>
+        </button>
+        <button type="button" class="menu-opcion" role="menuitem" (click)="opcionMenu('ausente')">
+          <span class="dot dot-a">A</span><span>Ausente</span>
+        </button>
+        <button type="button" class="menu-opcion" role="menuitem" (click)="opcionMenu('tardia')">
+          <span class="dot dot-t">T</span><span>Tardanza</span>
+        </button>
+        <button type="button" class="menu-opcion" role="menuitem" (click)="opcionMenu('justificado')">
+          <span class="dot dot-j">J</span><span>Justificado…</span>
+        </button>
+        <button type="button" class="menu-opcion" role="menuitem" (click)="opcionMenu('')">
+          <mat-icon>backspace</mat-icon><span>Vaciar</span>
+        </button>
+      </div>
+    </div>
+  }
+}

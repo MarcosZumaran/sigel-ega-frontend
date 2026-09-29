@@ -1,0 +1,181 @@
+<div class="notas-listado">
+  <div class="page-header">
+    <app-back-button />
+    <div class="titles">
+      <h1>Listado de notas · {{ tituloNivel() }}</h1>
+      <p class="subtitle">Matriz editable por estudiante y área</p>
+    </div>
+    <span class="spacer"></span>
+    <button mat-stroked-button (click)="volver()">Cambiar nivel</button>
+  </div>
+
+  <mat-card class="filtros-card">
+    <mat-card-content class="compact-content filtros-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Periodo</mat-label>
+        <mat-select [formControl]="fPeriodo">
+          @for (p of periodos(); track p.id) {
+            <mat-option [value]="p.id">{{ p.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Nivel</mat-label>
+        <mat-select [formControl]="fNivel">
+          <mat-option [value]="null">Todos</mat-option>
+          @for (n of niveles(); track n.id) {
+            <mat-option [value]="n.id">{{ n.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Grado</mat-label>
+        <mat-select [formControl]="fGrado">
+          <mat-option [value]="null">Todos</mat-option>
+          @for (g of gradosVis(); track g.id) {
+            <mat-option [value]="g.id">{{ g.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Sección</mat-label>
+        <mat-select [formControl]="fSeccion">
+          <mat-option [value]="null">Todas</mat-option>
+          @for (s of secciones(); track s.id) {
+            <mat-option [value]="s.id">{{ s.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Áreas</mat-label>
+        <mat-select [formControl]="fAreas" multiple>
+          @for (a of areas(); track a.id) {
+            <mat-option [value]="a.id">{{ a.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo</mat-label>
+        <mat-select [formControl]="fTipo">
+          <mat-option [value]="null">Todos</mat-option>
+          @for (t of tipos(); track t.id) {
+            <mat-option [value]="t.id">{{ t.nombre }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar estudiante</mat-label>
+        <input matInput [formControl]="search" placeholder="Apellidos o DNI" />
+      </mat-form-field>
+      <button mat-button (click)="clearFilters()">
+        <mat-icon>filter_alt_off</mat-icon>Limpiar filtros
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="acciones-bar">
+    <span class="resumen">
+      {{ filasVis().length }} estudiantes · {{ dirtyCount() }} cambios sin guardar
+    </span>
+    <span class="spacer"></span>
+    <button mat-stroked-button (click)="openImport()">
+      <mat-icon>upload</mat-icon>Importar SIAGIE
+    </button>
+    <button mat-raised-button color="primary" (click)="saveAll()" [disabled]="!dirtyCount() || saving()">
+      @if (saving()) {
+        <mat-spinner diameter="18"></mat-spinner>
+      } @else {
+        <span>Guardar ({{ dirtyCount() }})</span>
+      }
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else if (!filasVis().length) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">inbox</mat-icon>
+      <p class="empty-title">No hay estudiantes en esta sección</p>
+      <p class="empty-sub">Ajusta los filtros de periodo o sección.</p>
+    </div>
+  } @else if (!grupos().length) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">inbox</mat-icon>
+      <p class="empty-title">No hay áreas configuradas</p>
+      <p class="empty-sub">Ajusta los filtros de área o tipo de evaluación.</p>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      @if (reloading()) {
+        <mat-spinner diameter="24" class="reload-spinner"></mat-spinner>
+      }
+      <table class="matriz">
+        <thead>
+          <tr>
+            <th class="sticky-col sticky-corner" rowspan="2">Estudiante</th>
+            @for (g of grupos(); track g.tipo.id) {
+              <th [attr.colspan]="g.areas.length">{{ g.tipo.nombre }}</th>
+            }
+          </tr>
+          <tr>
+            @for (g of grupos(); track g.tipo.id) {
+              @for (a of g.areas; track a.id) {
+                <th class="area-sub">{{ a.nombre }}</th>
+              }
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of filasVis(); track trackFila($index, m); let ri = $index) {
+            <tr>
+              <td class="sticky-col alumno-cell">
+                <span class="alumno-nombre">{{ m.estudiante?.apellidos }}, {{ m.estudiante?.nombres }}</span>
+                <span class="alumno-dni">{{ m.estudiante?.dni }}</span>
+              </td>
+              @for (g of grupos(); track g.tipo.id) {
+                @for (a of g.areas; track a.id; let ci = $index) {
+                  @let c = celdaDe(m.id, a.id, g.tipo.id);
+                  <td class="celda" [class]="c ? celdaClase(c) : ''">
+                    @if (c) {
+                      <input
+                        class="celda-input"
+                        type="number" min="0" max="20" step="0.5"
+                        [value]="c.nota ?? ''"
+                        [attr.aria-label]="'Nota de ' + (m.estudiante?.nombres ?? '') + ' en ' + a.nombre"
+                        (change)="onNotaInput(c, $any($event.target).value)"
+                        (keydown)="focusCelda($event, ri, ci)"
+                      />
+                      <div class="celda-nivel-row">
+                        <button
+                          type="button"
+                          class="nivel-badge"
+                          [class]="nivelClase(c.nivel)"
+                          [matTooltip]="c.nivel === 'C' && !c.motivo ? 'Nivel C sin motivo: clic para registrar' : (c.nivel ?? 'Sin nivel')"
+                          (click)="c.nivel === 'C' && !c.motivo ? pedirMotivo(c) : null"
+                        >
+                          {{ c.nivel ?? '–' }}{{ c.nivel === 'C' && !c.motivo ? ' !' : '' }}
+                        </button>
+                        <select
+                          class="nivel-override"
+                          [value]="c.nivel ?? ''"
+                          [attr.aria-label]="'Sobrescribir nivel en ' + a.nombre"
+                          (change)="onNivelSelect(c, $any($event.target).value)"
+                        >
+                          <option value="">Auto</option>
+                          <option value="AD">AD</option>
+                          <option value="A">A</option>
+                          <option value="B">B</option>
+                          <option value="C">C</option>
+                        </select>
+                      </div>
+                    }
+                  </td>
+                }
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

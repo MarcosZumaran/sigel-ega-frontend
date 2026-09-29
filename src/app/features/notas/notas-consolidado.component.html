@@ -1,0 +1,118 @@
+<app-back-button />
+<h1>Consolidado de niveles de logro</h1>
+
+<mat-card class="mb-4">
+  <mat-card-content class="compact-content">
+    <mat-form-field appearance="outline">
+      <mat-label>Periodo</mat-label>
+      <mat-select [formControl]="fPeriodo">
+        @for (p of periodos(); track p.id) {
+          <mat-option [value]="p.id">{{ p.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Sección</mat-label>
+      <mat-select [formControl]="fSeccion">
+        @for (s of secciones(); track s.id) {
+          <mat-option [value]="s.id">{{ s.grado?.nombre }} {{ s.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Bimestre</mat-label>
+      <mat-select [formControl]="fBimestre">
+        @for (b of bimestres(); track b.id) {
+          <mat-option [value]="b.id">{{ b.nombre }}{{ b.activo ? ' (activo)' : '' }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="cargar()" [disabled]="loading()">Cargar</button>
+  </mat-card-content>
+</mat-card>
+
+@if (loading()) {
+  <div class="flex justify-center p-8"><mat-spinner diameter="40"></mat-spinner></div>
+} @else if (!data()) {
+  <mat-card><mat-card-content><p class="text-slate-500">Seleccione periodo, sección y bimestre, luego pulse Cargar.</p></mat-card-content></mat-card>
+} @else {
+  @if (esCerrado()) {
+    <mat-card class="cerrado mb-4">
+      <mat-card-content><p><mat-icon>lock</mat-icon> Bimestre cerrado. Solo lectura.</p></mat-card-content>
+    </mat-card>
+  }
+  <div class="head-row">
+    <h2>{{ data()!.bimestre.nombre }}</h2>
+    <button mat-flat-button color="primary" (click)="saveAll()" [disabled]="saving() || cambios() === 0 || esCerrado()">
+      @if (saving()) { <mat-spinner diameter="18"></mat-spinner> } @else { Guardar ({{ cambios() }}) }
+    </button>
+  </div>
+  @if (areas().length === 0) {
+    <mat-card><mat-card-content><p class="text-slate-500">No hay áreas configuradas para este nivel.</p></mat-card-content></mat-card>
+  } @else if (filas().length === 0) {
+    <mat-card><mat-card-content><p class="text-slate-500">No hay estudiantes matriculados en esta sección.</p></mat-card-content></mat-card>
+  } @else {
+    <div class="table-wrap">
+      <table class="excel">
+        <thead>
+          <tr>
+            <th class="sticky-col" rowspan="2">N°</th>
+            <th class="sticky-col2" rowspan="2">Estudiante</th>
+            @for (a of areas(); track a.id) {
+              <th [attr.colspan]="competencias(a).length || 1">{{ a.nombre }}</th>
+            }
+          </tr>
+          <tr>
+            @for (a of areas(); track a.id) {
+              @for (c of competencias(a); track c.id) {
+                <th class="sub">{{ c.nombre }}</th>
+              } @empty {
+                <th class="sub">Nivel</th>
+              }
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (est of filas(); track est.matricula_id; let i = $index) {
+            <tr>
+              <td class="sticky-col">{{ i + 1 }}</td>
+              <td class="sticky-col2">{{ est.estudiante.apellidos }}, {{ est.estudiante.nombres }}</td>
+              @for (a of areas(); track a.id) {
+                @for (c of competencias(a); track c.id) {
+                  @let cel = celda(est.matricula_id, c.id);
+                  <td class="cell" [class.c-sin-motivo]="cel?.nivel === 'C' && !cel?.conclusion">
+                    <div class="flex items-center gap-1">
+                      <mat-select
+                        [value]="cel?.nivel ?? null"
+                        (selectionChange)="onNivelSelect(est.matricula_id, c.id, $event.value, c.nombre)"
+                        [disabled]="esCerrado()"
+                        [attr.aria-label]="'Nivel ' + c.nombre + ' de ' + est.estudiante.nombres"
+                        class="niv-select niv-{{ (cel?.nivel ?? 'none') | lowercase }}">
+                        @for (n of niveles; track n) {
+                          <mat-option [value]="n">{{ n }}</mat-option>
+                        }
+                      </mat-select>
+                      @if (cel?.nivel === 'C' && !cel?.conclusion) {
+                        <button mat-icon-button color="warn" matTooltip="Falta conclusión descriptiva"
+                          (click)="pedirConclusion(est.matricula_id, c.id, c.nombre)" aria-label="Agregar conclusión">
+                          <mat-icon>warning</mat-icon>
+                        </button>
+                      } @else if (cel?.conclusion) {
+                        <button mat-icon-button matTooltip="{{ cel?.conclusion }}"
+                          (click)="pedirConclusion(est.matricula_id, c.id, c.nombre)" aria-label="Ver conclusión">
+                          <mat-icon>description</mat-icon>
+                        </button>
+                      }
+                    </div>
+                  </td>
+                } @empty {
+                  <td class="cell">—</td>
+                }
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

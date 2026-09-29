@@ -1,0 +1,113 @@
+<div class="page-header">
+  <h1>Estadisticas</h1>
+  <div class="filtros">
+    <mat-form-field appearance="outline">
+      <mat-label>Periodo</mat-label>
+      <mat-select [formControl]="fPeriodo" (selectionChange)="onFiltroChange()">
+        @for (p of periodos(); track p.id) {
+          <mat-option [value]="p.id">{{ p.nombre }} ({{ p.anio }})</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Seccion (solo logros)</mat-label>
+      <mat-select [formControl]="fSeccion" (selectionChange)="onFiltroChange()">
+        <mat-option [value]="null">Todas</mat-option>
+        @for (s of secciones(); track s.id) {
+          <mat-option [value]="s.id">{{ s.grado?.nombre }} {{ s.nombre }} ({{ s.turno }})</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="center"><mat-spinner diameter="40"></mat-spinner></div>
+} @else {
+  @if (dashboard(); as d) {
+    <div class="kpi-grid">
+      <mat-card><mat-card-header><mat-card-title>{{ d.total_estudiantes }}</mat-card-title><mat-card-subtitle>Estudiantes</mat-card-subtitle></mat-card-header></mat-card>
+      <mat-card><mat-card-header><mat-card-title>{{ d.total_matriculas }}</mat-card-title><mat-card-subtitle>Matriculas ({{ d.periodo_activo?.nombre ?? 'sin periodo' }})</mat-card-subtitle></mat-card-header></mat-card>
+      <mat-card><mat-card-header><mat-card-title>{{ d.total_secciones }}</mat-card-title><mat-card-subtitle>Secciones</mat-card-subtitle></mat-card-header></mat-card>
+      <mat-card>
+        <mat-card-header><mat-card-title>{{ d.asistencia_hoy.total }}</mat-card-title><mat-card-subtitle>Asistencia hoy</mat-card-subtitle></mat-card-header>
+        <mat-card-content>
+          <span class="mini">Presentes: {{ d.asistencia_hoy.presentes }}</span>
+          <span class="mini">Tardanzas: {{ d.asistencia_hoy.tardanzas }}</span>
+          <span class="mini">Ausentes: {{ d.asistencia_hoy.ausentes }}</span>
+          <span class="mini">Justificados: {{ d.asistencia_hoy.justificados }}</span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+
+  <div class="charts-grid">
+    <mat-card>
+      <mat-card-header><mat-card-title>Matriculas por nivel</mat-card-title></mat-card-header>
+      <mat-card-content>
+        @if (nivelesChart.length) {
+          <ngx-charts-bar-horizontal [results]="nivelesChart" [xAxis]="true" [yAxis]="true" [showDataLabel]="true"></ngx-charts-bar-horizontal>
+        } @else {
+          <p class="empty">Sin datos para el periodo.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-header><mat-card-title>Logros CNEB</mat-card-title></mat-card-header>
+      <mat-card-content>
+        @if (logrosChart.length) {
+          <ngx-charts-pie-chart [results]="logrosChart" [customColors]="logroColors" [labels]="true" [doughnut]="true"></ngx-charts-pie-chart>
+        } @else {
+          <p class="empty">Sin calificaciones registradas.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="full">
+    <mat-card-header><mat-card-title>Asistencia mensual</mat-card-title></mat-card-header>
+    <mat-card-content>
+      @if (asistenciaChart.length) {
+        <ngx-charts-bar-vertical-stacked [results]="asistenciaChart" [xAxis]="true" [yAxis]="true" [legend]="true" [showDataLabel]="false"></ngx-charts-bar-vertical-stacked>
+      } @else {
+        <p class="empty">Sin asistencias en el periodo.</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="full">
+    <mat-card-header><mat-card-title>Ocupacion de secciones</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="ocupacion()" class="full-width">
+        <ng-container matColumnDef="seccion">
+          <th mat-header-cell *matHeaderCellDef>Seccion</th>
+          <td mat-cell *matCellDef="let r">{{ r.seccion }}</td>
+        </ng-container>
+        <ng-container matColumnDef="grado">
+          <th mat-header-cell *matHeaderCellDef>Grado</th>
+          <td mat-cell *matCellDef="let r">{{ r.grado }}</td>
+        </ng-container>
+        <ng-container matColumnDef="ocupadas">
+          <th mat-header-cell *matHeaderCellDef>Ocupadas</th>
+          <td mat-cell *matCellDef="let r">{{ r.ocupadas }}</td>
+        </ng-container>
+        <ng-container matColumnDef="vacantes">
+          <th mat-header-cell *matHeaderCellDef>Vacantes</th>
+          <td mat-cell *matCellDef="let r">{{ r.vacantes }}</td>
+        </ng-container>
+        <ng-container matColumnDef="capacidad">
+          <th mat-header-cell *matHeaderCellDef>Capacidad</th>
+          <td mat-cell *matCellDef="let r">{{ r.capacidad }}</td>
+        </ng-container>
+        <ng-container matColumnDef="ocupacion">
+          <th mat-header-cell *matHeaderCellDef>Ocupacion</th>
+          <td mat-cell *matCellDef="let r">
+            <mat-progress-bar mode="determinate" [value]="r.capacidad ? (r.ocupadas / r.capacidad) * 100 : 0"></mat-progress-bar>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="ocupacionCols"></tr>
+        <tr mat-row *matRowDef="let row; columns: ocupacionCols;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+}

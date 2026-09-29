@@ -1,0 +1,79 @@
+h1 { margin: 0; font-size: 1.25rem; }
+.stat-chip mat-card-content { display: flex; align-items: baseline; gap: 0.5rem; padding: 0.6rem 1rem !important; }
+.stat-chip strong { font-size: 1.4rem; }
+.stat-p { border-left: 4px solid #059669; }
+.stat-a { border-left: 4px solid #dc2626; }
+.stat-t { border-left: 4px solid #d97706; }
+.stat-j { border-left: 4px solid #0284c7; }
+.table-wrap { position: relative; }
+.table-wrap.bloqueada { pointer-events: none; opacity: 0.7; }
+.grilla { border-collapse: collapse; font-size: 0.8rem; }
+.grilla th, .grilla td { border: 1px solid #e2e8f0; padding: 0.25rem 0.4rem; text-align: center; background: #fff; }
+.grilla thead th { background: #f1f5f9; text-transform: uppercase; font-size: 0.7rem; }
+.sticky-col { position: sticky; left: 0; z-index: 2; min-width: 2.5rem; }
+.sticky-col-2 { position: sticky; left: 2.5rem; z-index: 2; text-align: left !important; min-width: 12rem; }
+thead .sticky-col, thead .sticky-col-2 { z-index: 3; }
+.alumno .dni { display: block; color: #64748b; font-size: 0.68rem; }
+.dia { min-width: 2rem; }
+.dia small { display: block; font-weight: normal; color: #64748b; }
+.celda { width: 2rem; height: 2rem; cursor: pointer; font-weight: 600; min-width: 2rem; }
+.celda:focus { outline: 2px solid #1e3a8a; outline-offset: -2px; }
+.celda:focus-visible { outline: 2px solid #1e3a8a; }
+.est-presente { background: #d1fae5; color: #065f46; }
+.est-ausente { background: #fee2e2; color: #991b1b; }
+.est-tardia { background: #fef3c7; color: #92400e; }
+.est-justificado { background: #e0f2fe; color: #0c4a6e; }
+.est-vacia { background: #f8fafc; color: #cbd5e1; }
+.celda.cambiada { box-shadow: inset 0 0 0 2px #1e3a8a; }
+.resumen { font-weight: 600; }
+.rp { background: #ecfdf5 !important; }
+.ra { background: #fef2f2 !important; }
+.rt { background: #fffbeb !important; }
+.rj { background: #f0f9ff !important; }
+h2 { margin: 0; font-size: 1.25rem; }
+.compact-content { padding: 0.75rem 1rem !important; }
+.filter-field { flex: 0 1 160px; }
+.filter-field-wide { flex: 0 1 260px; }
+.empty-state { text-align: center; padding: 3rem 1rem; color: #64748b; }
+.empty-state .empty-icon { font-size: 64px; width: 64px; height: 64px; color: #cbd5e1; }
+.celda.j-pendiente { outline: 2px dotted #dc2626; outline-offset: -2px; }
+.menu-overlay { position: fixed; inset: 0; z-index: 1000; }
+.menu-ctx {
+  position: fixed;
+  z-index: 1001;
+  min-width: 220px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 0.25rem;
+  border: 1px solid #e2e8f0;
+}
+.menu-opcion {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  text-align: left;
+}
+.menu-opcion:hover, .menu-opcion:focus-visible { background: #f1f5f9; outline: none; }
+.menu-opcion .dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+.dot-p { background: #d1fae5; color: #065f46; }
+.dot-a { background: #fee2e2; color: #991b1b; }
+.dot-t { background: #fef3c7; color: #92400e; }
+.dot-j { background: #e0f2fe; color: #0c4a6e; }
+.menu-opcion mat-icon { font-size: 1.25rem; width: 1.5rem; height: 1.5rem; color: #64748b; }

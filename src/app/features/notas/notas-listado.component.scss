@@ -1,0 +1,139 @@
+:host {
+  display: block;
+  font-size: 0.875rem;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.page-head h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #0f172a;
+}
+
+.subtitle {
+  margin: 0.15rem 0 0;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.filters {
+  margin-bottom: 1rem;
+  border-radius: 1rem;
+}
+
+.compact-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem 1rem !important;
+}
+
+.compact-content mat-form-field {
+  flex: 0 1 160px;
+}
+
+.table-wrap {
+  position: relative;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #64748b;
+}
+
+.empty-state mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #cbd5e1;
+}
+
+.scroll-x {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+table.sabana {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 720px;
+}
+
+.sabana th,
+.sabana td {
+  border: 1px solid #e2e8f0;
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  background: #fff;
+}
+
+.sabana thead th {
+  background: #f1f5f9;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: #475569;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.sticky-col {
+  position: sticky;
+  z-index: 2;
+}
+
+.c-num { left: 0; min-width: 44px; }
+.c-dni { left: 44px; min-width: 96px; }
+.c-est { left: 140px; min-width: 220px; }
+
+thead .sticky-col {
+  z-index: 4;
+}
+
+.c-area {
+  text-align: center;
+  min-width: 84px;
+}
+
+.nota {
+  font-weight: 600;
+  margin-right: 0.35rem;
+}
+
+.badge {
+  display: inline-block;
+  min-width: 1.6rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.niv-AD { background: #dcfce7; color: #166534; }
+.niv-A { background: #dbeafe; color: #1d4ed8; }
+.niv-B { background: #fef9c3; color: #854d0e; }
+.niv-C { background: #fee2e2; color: #b91c1c; }
+
+.vacio { color: #cbd5e1; }
+
+.c-acc {
+  white-space: nowrap;
+  text-align: center;
+}

@@ -1,0 +1,17 @@
+.app-container {
+  height: 100vh;
+}
+
+.app-sidebar {
+  width: 18rem;
+  background-color: #0F172A !important;
+  color: #fff;
+  border: none !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  padding: 1.5rem;
+  min-height: calc(100vh - 64px);
+}

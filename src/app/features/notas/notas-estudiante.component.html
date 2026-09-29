@@ -1,0 +1,71 @@
+<div class="page-head">
+  <app-back-button />
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a routerLink="/dashboard">Inicio</a>
+    <span>/</span>
+    <a routerLink="/notas">Notas</a>
+    <span>/</span>
+    <a routerLink="/notas/listado">Listado</a>
+    <span>/</span>
+    <span aria-current="page">{{ nombreCompleto() || 'Estudiante' }}</span>
+  </nav>
+</div>
+
+@if (loading()) {
+  <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+} @else if (estudiante(); as est) {
+  <div class="est-header">
+    <h1>{{ nombreCompleto() }}</h1>
+    <p class="dni">DNI {{ est.dni }}</p>
+    <a mat-stroked-button color="primary" [routerLink]="['/notas/estudiante', est.id, 'informe']"><mat-icon>description</mat-icon> Ver informe</a>
+  </div>
+  <div class="bim-grid">
+    @for (card of cards(); track card.id) {
+      <mat-card class="bim-card" [class.sin-datos]="!card.nivel">
+        <div class="bim-head">
+          <div>
+            <h3>{{ card.nombre }}</h3>
+            @if (card.fecha_inicio && card.fecha_fin) {
+              <p class="bim-rango">{{ card.fecha_inicio | date:'dd/MM/yyyy':'+0000' }} – {{ card.fecha_fin | date:'dd/MM/yyyy':'+0000' }}</p>
+            }
+            <p class="bim-sub">
+              @if (card.activo) {
+                <span class="estado-pill activo">Activo</span>
+              } @else {
+                <span class="estado-pill cerrado">Cerrado</span>
+              }
+              @if (card.nivel) {
+                · {{ card.evaluadas }} competencias registradas
+              } @else {
+                · Sin registrar
+              }
+            </p>
+          </div>
+          @if (card.nivel) {
+            <span class="bim-badge niv-{{ card.nivel }}">{{ card.nivel }}</span>
+          } @else {
+            <span class="bim-badge sin">—</span>
+          }
+        </div>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="card.total ? (card.evaluadas / card.total) * 100 : 0">
+        </mat-progress-bar>
+        <div class="bim-foot">
+          @if (card.nivel && card.activo) {
+            <a mat-flat-button color="primary" class="w-full" [routerLink]="['/notas/estudiante', est.id, 'bimestre', card.id]">Ver notas</a>
+          } @else if (card.nivel) {
+            <a mat-stroked-button class="w-full" [routerLink]="['/notas/estudiante', est.id, 'bimestre', card.id]">Ver notas</a>
+          } @else {
+            <a mat-stroked-button class="w-full btn-gris" [routerLink]="['/notas/estudiante', est.id, 'bimestre', card.id]">Ver notas</a>
+          }
+        </div>
+      </mat-card>
+    }
+  </div>
+} @else {
+  <div class="empty-state">
+    <mat-icon>inbox</mat-icon>
+    <p>No se encontró el estudiante.</p>
+  </div>
+}

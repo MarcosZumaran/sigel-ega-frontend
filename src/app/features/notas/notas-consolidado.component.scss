@@ -1,0 +1,21 @@
+h1 { margin: 0 0 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.compact-content { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; padding: 0.75rem 1rem !important; }
+.compact-content mat-form-field { flex: 0 1 160px; }
+.head-row { display: flex; justify-content: space-between; align-items: center; margin: 1rem 0; }
+.head-row h2 { margin: 0; }
+.cerrado { background: #fffbeb; border-left: 4px solid #f59e0b; }
+.cerrado p { display: flex; align-items: center; gap: 0.5rem; margin: 0; color: #92400e; }
+.table-wrap { overflow: auto; max-height: 70vh; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #fff; }
+table.excel { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
+table.excel th, table.excel td { border: 1px solid #e2e8f0; padding: 0.4rem 0.5rem; }
+table.excel thead th { background: #f1f5f9; text-transform: uppercase; font-size: 0.72rem; position: sticky; top: 0; z-index: 3; }
+table.excel thead th.sub { font-size: 0.68rem; font-weight: 500; text-transform: none; }
+.sticky-col { position: sticky; left: 0; background: #fff; z-index: 2; min-width: 2.5rem; }
+.sticky-col2 { position: sticky; left: 2.5rem; background: #fff; z-index: 2; min-width: 12rem; }
+thead .sticky-col, thead .sticky-col2 { z-index: 4; background: #f1f5f9; }
+tbody tr:nth-child(even) td { background: #f8fafc; }
+tbody tr:nth-child(even) td.sticky-col, tbody tr:nth-child(even) td.sticky-col2 { background: #f8fafc; }
+.cell { min-width: 7rem; }
+.niv-select { width: 4.5rem; }
+.c-sin-motivo { outline: 2px dashed #dc2626; outline-offset: -2px; }

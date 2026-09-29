@@ -1,0 +1,94 @@
+<div class="page-head">
+  <app-back-button />
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a routerLink="/dashboard">Inicio</a><span>/</span>
+    <a routerLink="/notas">Notas</a><span>/</span>
+    <a routerLink="/notas/listado">Listado</a><span>/</span>
+    <a [routerLink]="['/notas/estudiante', estudianteId()]">Estudiante</a><span>/</span>
+    <span aria-current="page">{{ bimestreNombre() || 'Bimestre' }}</span>
+  </nav>
+</div>
+
+@if (loading()) {
+  <div class="center"><mat-spinner diameter="40"></mat-spinner></div>
+} @else {
+  @if (!hayBimestres()) {
+    <mat-card class="warn"><mat-card-content>No hay bimestre activo. Active un bimestre antes de registrar notas.</mat-card-content></mat-card>
+  }
+  @if (esCerrado()) {
+    <mat-card class="cerrado"><mat-card-content><mat-icon>lock</mat-icon> Bimestre cerrado. Solo lectura.</mat-card-content></mat-card>
+  }
+  <div class="head-row">
+    <div>
+      <h1>{{ bimestreNombre() || 'Bimestre' }} — {{ nombreCompleto() }}</h1>
+      @if (bimestreRango()) {
+        <p class="bim-rango">{{ bimestreRango() }}</p>
+      }
+      <p class="sub">Registra la nota 0–20 por competencia; el nivel se calcula solo.</p>
+    </div>
+    <div class="actions">
+      <button mat-stroked-button (click)="exportar('xlsx')"><mat-icon>table_view</mat-icon> Excel</button>
+      <button mat-stroked-button (click)="exportar('pdf')"><mat-icon>picture_as_pdf</mat-icon> PDF</button>
+      @if (!esCerrado()) {
+        <button mat-flat-button color="primary" (click)="saveAll()" [disabled]="!pendientes() || saving()">
+          @if (saving()) { <mat-spinner diameter="18"></mat-spinner> } @else { Guardar ({{ pendientes() }}) }
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (!filas().length) {
+    <mat-card class="empty"><mat-card-content>No hay competencias configuradas.</mat-card-content></mat-card>
+  } @else {
+    <div class="table-scroll">
+      <table class="excel" aria-label="Notas por competencia">
+        <thead>
+          <tr>
+            <th class="c-n">N°</th>
+            <th class="c-area">ÁREA</th>
+            <th class="c-comp">COMPETENCIA</th>
+            <th class="c-nota">NOTA</th>
+            <th class="c-nivel">NIVEL</th>
+            <th class="c-conc">CONCLUSIÓN</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of filas(); track f.competencia.id; let i = $index) {
+            <tr>
+              <td class="c-n">{{ i + 1 }}</td>
+              <td class="c-area">{{ f.areaPadre?.nombre ?? '—' }}</td>
+              <td class="c-comp">{{ f.competencia.nombre }}</td>
+              <td class="c-nota">
+                <input
+                  type="number" min="0" max="20" step="0.5"
+                  [value]="f.nota ?? ''"
+                  [readonly]="esCerrado()"
+                  [attr.aria-label]="'Nota ' + f.competencia.nombre"
+                  [class.modificada]="f.dirty"
+                  (blur)="onNotaInput(f, $any($event.target).value)"
+                  (keydown.enter)="$any($event.target).blur()"
+                  (keydown.escape)="$any($event.target).blur()" />
+              </td>
+              <td class="c-nivel">
+                @if (f.nivel) {
+                  <span class="badge niv-{{ f.nivel }}">{{ f.nivel }}</span>
+                } @else { <span class="vacio">—</span> }
+              </td>
+              <td class="c-conc">
+                <input
+                  type="text" maxlength="500" placeholder="Conclusión descriptiva"
+                  [value]="f.conclusion"
+                  [readonly]="esCerrado()"
+                  [attr.aria-label]="'Conclusión ' + f.competencia.nombre"
+                  [class.sin-motivo]="f.nivel === 'C' && !f.conclusion.trim()"
+                  (blur)="f.conclusion = $any($event.target).value; f.dirty = true"
+                  (click)="f.nivel === 'C' && !f.conclusion.trim() && pedirConclusion(f)" />
+                @if (f.nivel === 'C' && !f.conclusion.trim()) { <span class="alerta" title="El nivel C exige conclusión">!</span> }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
