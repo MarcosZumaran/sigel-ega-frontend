@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -17,19 +18,19 @@ import type { Asistencia } from '../../core/models/asistencia.model';
 @Component({
   selector: 'app-asistencias-show',
   standalone: true,
-  imports: [BackButtonComponent, RouterLink, FormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatSnackBarModule, MatChipsModule],
+  imports: [BackButtonComponent, RouterLink, DatePipe, FormsModule, MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatSnackBarModule, MatChipsModule],
   template: `
     <div class="page-header">
       <app-back-button />
       <h1>Detalle de asistencia</h1>
-      <a mat-button routerLink="/asistencias"><mat-icon>arrow_back</mat-icon> Volver</a>
+      <span></span>
     </div>
     @if (loading()) {
       <div class="center"><mat-spinner diameter="40"></mat-spinner></div>
     } @else if (row()) {
       <mat-card>
         <mat-card-content class="grid">
-          <div><strong>Fecha:</strong> {{ row()!.fecha }}</div>
+          <div><strong>Fecha:</strong> {{ row()!.fecha | date:'dd/MM/yyyy' }}</div>
           <div><strong>Estudiante:</strong> {{ row()!.matricula?.estudiante?.nombres }} {{ row()!.matricula?.estudiante?.apellidos }}</div>
           <div><strong>DNI:</strong> {{ row()!.matricula?.estudiante?.dni }}</div>
           <div><strong>Seccion:</strong> {{ row()!.matricula?.seccion?.grado?.nombre }} {{ row()!.matricula?.seccion?.nombre }}</div>
@@ -37,7 +38,7 @@ import type { Asistencia } from '../../core/models/asistencia.model';
           <div><strong>Motivo:</strong> {{ row()!.motivo_justificacion ?? '-' }}</div>
         </mat-card-content>
       </mat-card>
-      @if (row()!.estado !== 'justificado') {
+      @if (row()!.estado === 'ausente') {
         <mat-card class="justify">
           <mat-card-header><mat-card-title>Justificar inasistencia</mat-card-title></mat-card-header>
           <mat-card-content>
@@ -50,6 +51,23 @@ import type { Asistencia } from '../../core/models/asistencia.model';
             </button>
           </mat-card-content>
         </mat-card>
+      }
+      @if (row()!.estado === 'justificado') {
+        <mat-card class="justify">
+          <mat-card-header><mat-card-title>Justificación registrada</mat-card-title></mat-card-header>
+          <mat-card-content>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Motivo de justificacion</mat-label>
+              <input matInput [(ngModel)]="motivo" maxlength="500" />
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="onJustificar()" [disabled]="!motivo.trim() || saving()">
+              @if (saving()) { <mat-spinner diameter="20"></mat-spinner> } @else { <span>Actualizar justificación</span> }
+            </button>
+          </mat-card-content>
+        </mat-card>
+      }
+      @if (row()!.estado === 'presente' || row()!.estado === 'tardia') {
+        <p class="hint">Esta asistencia no requiere justificación.</p>
       }
     } @else {
       <p class="hint">Registro no encontrado.</p>
@@ -84,6 +102,7 @@ export class AsistenciasShowComponent {
     this.service.getById(id).subscribe({
       next: (r) => {
         this.row.set(r);
+        this.motivo = r.motivo_justificacion ?? '';
         this.loading.set(false);
       },
       error: (err) => {

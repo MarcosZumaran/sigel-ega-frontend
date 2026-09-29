@@ -27,7 +27,7 @@ import { DialogService } from '../../core/services/dialog.service';
   template: `
     <div class="page-header">
       <h1>Asistencias</h1>
-      <a mat-raised-button color="primary" routerLink="create"><mat-icon>add</mat-icon> Registrar asistencia</a>
+      <a mat-raised-button color="primary" [routerLink]="['/asistencias/create']"><mat-icon>add</mat-icon> Registrar asistencia</a>
     </div>
     <mat-card class="filters">
       <mat-card-content class="filter-row">
