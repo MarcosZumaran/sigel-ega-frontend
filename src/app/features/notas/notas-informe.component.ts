@@ -1,9 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, signal } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BackButtonComponent } from '../../shared/components/back-button.component';
@@ -13,89 +12,54 @@ import { extractApiError } from '../../core/utils/api-error';
 @Component({
   selector: 'app-notas-informe',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatIconModule, MatTableModule, MatProgressSpinnerModule, MatSnackBarModule, BackButtonComponent],
+  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatSnackBarModule, BackButtonComponent],
   template: `
     <app-back-button />
     <h1>Informe de Progreso</h1>
     @if (loading()) {
       <mat-spinner diameter="40"></mat-spinner>
     } @else if (informe()) {
-      <div class="boleta-head no-print">
+      <div class="informe-head no-print">
         <div>
           <h2>{{ informe()!.estudiante.nombres }} {{ informe()!.estudiante.apellidos }}</h2>
           <p>DNI {{ informe()!.estudiante.dni }} — Período {{ informe()!.periodo.nombre }}</p>
         </div>
-        <div class="boleta-actions">
+        <div class="informe-actions">
           <button mat-raised-button color="primary" (click)="descargarPdf()"><mat-icon>download</mat-icon> Descargar PDF</button>
-          <button mat-stroked-button (click)="imprimir()"><mat-icon>print</mat-icon> Imprimir</button>
+          <button mat-stroked-button (click)="imprimirPdf()"><mat-icon>print</mat-icon> Imprimir</button>
+          <a mat-stroked-button [routerLink]="['/notas/estudiante', id]"><mat-icon>arrow_back</mat-icon> Volver</a>
         </div>
       </div>
-      @for (area of informe()!.areas; track area.id) {
-        <mat-card class="area-card">
-          <mat-card-header>
-            <mat-card-title>{{ area.nombre }}</mat-card-title>
-            <mat-card-subtitle>Nivel del área: <strong class="niv-{{ area.nivel_logro_area?.toLowerCase() }}">{{ area.nivel_logro_area ?? '—' }}</strong></mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <table mat-table [dataSource]="area.competencias" class="mat-elevation-z1">
-              <ng-container matColumnDef="competencia">
-                <th mat-header-cell *matHeaderCellDef>Competencia</th>
-                <td mat-cell *matCellDef="let c">{{ c.nombre }}</td>
-              </ng-container>
-              <ng-container matColumnDef="b1">
-                <th mat-header-cell *matHeaderCellDef>B1</th>
-                <td mat-cell *matCellDef="let c"><span class="niv-{{ c.bimestres['1']?.nivel?.toLowerCase() }}">{{ c.bimestres['1']?.nivel ?? '—' }}</span></td>
-              </ng-container>
-              <ng-container matColumnDef="b2">
-                <th mat-header-cell *matHeaderCellDef>B2</th>
-                <td mat-cell *matCellDef="let c"><span class="niv-{{ c.bimestres['2']?.nivel?.toLowerCase() }}">{{ c.bimestres['2']?.nivel ?? '—' }}</span></td>
-              </ng-container>
-              <ng-container matColumnDef="b3">
-                <th mat-header-cell *matHeaderCellDef>B3</th>
-                <td mat-cell *matCellDef="let c"><span class="niv-{{ c.bimestres['3']?.nivel?.toLowerCase() }}">{{ c.bimestres['3']?.nivel ?? '—' }}</span></td>
-              </ng-container>
-              <ng-container matColumnDef="b4">
-                <th mat-header-cell *matHeaderCellDef>B4</th>
-                <td mat-cell *matCellDef="let c"><span class="niv-{{ c.bimestres['4']?.nivel?.toLowerCase() }}">{{ c.bimestres['4']?.nivel ?? '—' }}</span></td>
-              </ng-container>
-              <ng-container matColumnDef="final">
-                <th mat-header-cell *matHeaderCellDef>Final</th>
-                <td mat-cell *matCellDef="let c"><strong class="niv-{{ c.nivel_final?.toLowerCase() }}">{{ c.nivel_final ?? '—' }}</strong></td>
-              </ng-container>
-              <ng-container matColumnDef="conclusion">
-                <th mat-header-cell *matHeaderCellDef>Conclusión</th>
-                <td mat-cell *matCellDef="let c">{{ conclusionDe(c) }}</td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="cols"></tr>
-              <tr mat-row *matRowDef="let row; columns: cols;"></tr>
-            </table>
-          </mat-card-content>
-        </mat-card>
+      @if (pdfUrl()) {
+        <iframe #pdfFrame [src]="pdfUrl()" class="pdf-visor" title="Informe de progreso en PDF"></iframe>
+      } @else {
+        <p>Cargando visor del PDF…</p>
       }
     } @else {
       <p>No se pudo cargar el informe.</p>
     }
   `,
   styles: [`
-    .boleta-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
-    .boleta-actions { display: flex; gap: 0.5rem; }
-    .area-card { margin-bottom: 1rem; }
-    .niv-ad { color: #16a34a; font-weight: 700; }
-    .niv-a { color: #2563eb; font-weight: 700; }
-    .niv-b { color: #b45309; font-weight: 700; }
-    .niv-c { color: #dc2626; font-weight: 700; }
+    .informe-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    .informe-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .pdf-visor { width: 100%; height: 80vh; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; }
     @media print {
       .no-print, app-back-button { display: none !important; }
+      .pdf-visor { height: 100vh; border: none; }
     }
   `],
 })
-export class NotasInformeComponent implements OnInit {
+export class NotasInformeComponent implements OnInit, OnDestroy {
   loading = signal(true);
   informe = signal<InformeProgreso | null>(null);
-  cols = ['competencia', 'b1', 'b2', 'b3', 'b4', 'final', 'conclusion'];
-  private id = 0;
+  pdfUrl = signal<SafeResourceUrl | null>(null);
+  private pdfBlob: Blob | null = null;
+  id = 0;
+  private rawPdfUrl: string | null = null;
 
-  constructor(private route: ActivatedRoute, private svc: InformeService, private snack: MatSnackBar) {}
+  @ViewChild('pdfFrame') pdfFrame?: ElementRef<HTMLIFrameElement>;
+
+  constructor(private route: ActivatedRoute, private svc: InformeService, private snack: MatSnackBar, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('estudianteId'));
@@ -103,28 +67,44 @@ export class NotasInformeComponent implements OnInit {
       next: (d) => { this.informe.set(d); this.loading.set(false); },
       error: (e) => { this.loading.set(false); this.snack.open(extractApiError(e, 'No se pudo cargar el informe'), 'Cerrar', { duration: 4000 }); },
     });
-  }
-
-  conclusionDe(c: { bimestres: Record<string, { conclusion: string | null }> }): string {
-    const vals = Object.values(c.bimestres).map((b) => b?.conclusion).filter((x): x is string => !!x);
-    return vals.length ? vals[vals.length - 1]! : '—';
-  }
-
-  descargarPdf(): void {
     this.svc.descargarPdf(this.id).subscribe({
       next: (blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `informe-progreso-${this.id}.pdf`;
-        a.click();
-        URL.revokeObjectURL(url);
+        this.pdfBlob = blob;
+        this.rawPdfUrl = URL.createObjectURL(blob);
+        this.pdfUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(this.rawPdfUrl));
       },
-      error: (e) => this.snack.open(extractApiError(e, 'No se pudo descargar el PDF'), 'Cerrar', { duration: 4000 }),
+      error: (e) => this.snack.open(extractApiError(e, 'No se pudo cargar el visor del PDF'), 'Cerrar', { duration: 4000 }),
     });
   }
 
-  imprimir(): void {
-    window.print();
+  ngOnDestroy(): void {
+    if (this.rawPdfUrl) {
+      URL.revokeObjectURL(this.rawPdfUrl);
+      this.rawPdfUrl = null;
+    }
+  }
+
+  descargarPdf(): void {
+    if (!this.pdfBlob) return;
+    const url = URL.createObjectURL(this.pdfBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `informe-progreso-${this.id}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  imprimirPdf(): void {
+    const frame = this.pdfFrame?.nativeElement;
+    try {
+      if (frame?.contentWindow) {
+        frame.contentWindow.focus();
+        frame.contentWindow.print();
+        return;
+      }
+    } catch {
+      // CSP o cross-origin: fallback a descarga
+    }
+    this.descargarPdf();
   }
 }
