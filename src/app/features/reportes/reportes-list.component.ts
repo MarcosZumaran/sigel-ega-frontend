@@ -1,4 +1,5 @@
 import { Component, signal, viewChild, effect, inject} from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -22,7 +23,7 @@ import { DialogService } from '../../core/services/dialog.service';
 @Component({
   selector: 'app-reportes-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCardModule, MatProgressSpinnerModule, MatSnackBarModule, MatChipsModule],
+  imports: [RouterLink, DatePipe, FormsModule, MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCardModule, MatProgressSpinnerModule, MatSnackBarModule, MatChipsModule],
   template: `
     <div class="page-header">
       <h1>Reportes</h1>
@@ -86,11 +87,11 @@ import { DialogService } from '../../core/services/dialog.service';
             </ng-container>
             <ng-container matColumnDef="estado">
               <th mat-header-cell *matHeaderCellDef>Estado</th>
-              <td mat-cell *matCellDef="let row"><mat-chip>{{ row.estado }}</mat-chip></td>
+              <td mat-cell *matCellDef="let row"><mat-chip class="est-{{ row.estado }}">{{ row.estado }}</mat-chip></td>
             </ng-container>
             <ng-container matColumnDef="fecha">
               <th mat-header-cell *matHeaderCellDef>Generado</th>
-              <td mat-cell *matCellDef="let row">{{ row.created_at }}</td>
+              <td mat-cell *matCellDef="let row">{{ row.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
             </ng-container>
             <ng-container matColumnDef="acciones">
               <th mat-header-cell *matHeaderCellDef>Acciones</th>
@@ -114,6 +115,10 @@ import { DialogService } from '../../core/services/dialog.service';
     .filters { margin-bottom: 1rem; }
     .full-width { width: 100%; }
     .center { display: flex; justify-content: center; padding: 2rem; }
+    .est-generado { background: #dcfce7 !important; color: #166534 !important; }
+    .est-cacheado { background: #dbeafe !important; color: #1d4ed8 !important; }
+    .est-expirado { background: #e2e8f0 !important; color: #475569 !important; }
+    td mat-icon { font-size: 26px; width: 26px; height: 26px; }
   `],
 })
 export class ReportesListComponent {

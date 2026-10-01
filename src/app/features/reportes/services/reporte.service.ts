@@ -25,6 +25,16 @@ export class ReporteService {
     return this.http.get(`${environment.apiUrl}/reportes/${id}/descargar`, { responseType: 'blob' });
   }
 
+  descargarOficial(
+    tipo: 'acta-evaluacion' | 'nomina-matricula' | 'orden-merito',
+    params: Record<string, string | number | boolean>
+  ): Observable<Blob> {
+    const qs = new URLSearchParams(
+      Object.entries(params).map(([k, v]) => [k, String(v)])
+    ).toString();
+    return this.http.get(`${environment.apiUrl}/reportes/${tipo}?${qs}`, { responseType: 'blob' });
+  }
+
   delete(id: number): Observable<{ message: string }> {
     return this.api.delete<{ message: string }>(`/reportes/${id}`);
   }
