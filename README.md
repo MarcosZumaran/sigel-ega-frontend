@@ -2,6 +2,19 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.24.
 
+## Requisitos
+
+- Node.js 22.x LTS (ver `.nvmrc`)
+- npm 10.x
+
+Uso:
+
+```
+nvm use
+npm install
+npm start
+```
+
 ## Development server
 
 To start a local development server, run:
