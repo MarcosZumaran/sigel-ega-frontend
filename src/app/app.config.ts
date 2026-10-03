@@ -8,6 +8,7 @@ import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { SESSION_INITIALIZER } from './core/initializers/session.init';
 
 registerLocaleData(localeEsPe, 'es-PE');
 
@@ -18,6 +19,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
+    SESSION_INITIALIZER,
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,
       useValue: {
