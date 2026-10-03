@@ -420,11 +420,15 @@ export class AsistenciasMatricialComponent implements OnInit {
 
     const headerRow = sheet.getRow(1);
     headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    headerRow.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'FF1E3A8A' },
-    };
+    // Fill por celda (no a nivel de fila): el estilo de fila no siempre se
+    // propaga a todas las celdas al abrir en LibreOffice/Excel.
+    headerRow.eachCell((cell) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF1E3A8A' },
+      };
+    });
     headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
 
     const fills: Record<string, string> = {
