@@ -405,21 +405,70 @@ export class AsistenciasMatricialComponent implements OnInit {
   }
 
   async exportarExcel(): Promise<void> {
-    const XLSX = await import('xlsx');
+    const ExcelJS = await import('exceljs');
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'SIGEL-EGA';
+    workbook.created = new Date();
+
+    const sheet = workbook.addWorksheet('Asistencia', {
+      pageSetup: { orientation: 'landscape', fitToPage: true },
+    });
+    sheet.views = [{ state: 'frozen', ySplit: 1 }];
+
     const head = ['DNI', 'Apellidos y nombres', ...this.dias.map((d) => `${d.num}/${d.dow}`), 'P', 'A', 'T', 'J'];
-    const aoa: (string | number)[][] = [head];
+    sheet.addRow(head);
+
+    const headerRow = sheet.getRow(1);
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    headerRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF1E3A8A' },
+    };
+    headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
+
+    const fills: Record<string, string> = {
+      P: 'FF22C55E', // verde: presente
+      A: 'FFEF4444', // rojo: ausente
+      T: 'FFEAB308', // amarillo: tardía
+      J: 'FF3B82F6', // azul: justificado
+    };
+
     for (const f of this.filas()) {
-      aoa.push([
+      const row = sheet.addRow([
         f.matricula.estudiante?.dni ?? '',
         this.nombreAlumno(f),
         ...f.celdas.map((c) => this.letra(c)),
         f.resumen.presente, f.resumen.ausente, f.resumen.tardia, f.resumen.justificado,
       ]);
+      row.eachCell((cell, colNumber) => {
+        if (colNumber <= 2) return;
+        const letra = String(cell.value ?? '');
+        const argb = fills[letra];
+        if (argb) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb } };
+          cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        }
+      });
     }
-    const ws = XLSX.utils.aoa_to_sheet(aoa);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Asistencia');
-    XLSX.writeFile(wb, `asistencia_${this.seccion()?.id}_${this.mes()}.xlsx`);
+
+    sheet.columns = [
+      { width: 12 }, { width: 32 },
+      ...this.dias.map(() => ({ width: 7 })),
+      { width: 5 }, { width: 5 }, { width: 5 }, { width: 5 },
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `asistencia_${this.seccion()?.id}_${this.mes()}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   async exportarPdf(): Promise<void> {
