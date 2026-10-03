@@ -18,77 +18,19 @@
         </a>
       </div>
 
-      <div class="px-6 py-2 text-[11px] font-semibold text-white/40 uppercase tracking-wider">
-        Alumnado y Padres
-      </div>
-      <div class="px-0 space-y-0.5">
-        <a routerLink="/padres" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>family_restroom</mat-icon>
-          <span>Padres de Familia</span>
-        </a>
-        <a routerLink="/estudiantes" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>school</mat-icon>
-          <span>Estudiantes</span>
-        </a>
-        <a routerLink="/apoderados" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>link</mat-icon>
-          <span>Apoderados</span>
-        </a>
-      </div>
-
-      <div class="px-6 py-2 mt-3 text-[11px] font-semibold text-white/40 uppercase tracking-wider">
-        Gestión Académica
-      </div>
-      <div class="px-0 space-y-0.5">
-        <a routerLink="/matriculas" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>app_registration</mat-icon>
-          <span>Matrículas</span>
-        </a>
-        <a routerLink="/notas" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>grade</mat-icon>
-          <span>Notas</span>
-        </a>
-        <a routerLink="/asistencias" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>fact_check</mat-icon>
-          <span>Asistencias</span>
-        </a>
-        <a routerLink="/asistencias/historial" routerLinkActive="sidebar-item-active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-item">
-          <mat-icon>history</mat-icon>
-          <span>Historial asistencias</span>
-        </a>
-      </div>
-
-      <div class="px-6 py-2 mt-3 text-[11px] font-semibold text-white/40 uppercase tracking-wider">
-        Infraestructura
-      </div>
-      <div class="px-0 space-y-0.5">
-        <a routerLink="/periodos" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>calendar_month</mat-icon>
-          <span>Períodos</span>
-        </a>
-        <a routerLink="/grados" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>layers</mat-icon>
-          <span>Grados</span>
-        </a>
-        <a routerLink="/secciones" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>view_module</mat-icon>
-          <span>Secciones</span>
-        </a>
-      </div>
-
-      <div class="px-6 py-2 mt-3 text-[11px] font-semibold text-white/40 uppercase tracking-wider">
-        Reportes
-      </div>
-      <div class="px-0 space-y-0.5 pb-2">
-        <a routerLink="/reportes" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>description</mat-icon>
-          <span>Reportes</span>
-        </a>
-        <a routerLink="/estadisticas" routerLinkActive="sidebar-item-active" class="sidebar-item">
-          <mat-icon>bar_chart</mat-icon>
-          <span>Estadísticas</span>
-        </a>
-      </div>
+      @for (seccion of menuFiltrado(); track seccion.titulo) {
+        <div class="px-6 py-2 mt-3 text-[11px] font-semibold text-white/40 uppercase tracking-wider first:mt-0">
+          {{ seccion.titulo }}
+        </div>
+        <div class="px-0 space-y-0.5">
+          @for (item of seccion.items; track item.url) {
+            <a [routerLink]="item.url" routerLinkActive="sidebar-item-active" [routerLinkActiveOptions]="{ exact: item.exact ?? false }" class="sidebar-item">
+              <mat-icon>{{ item.icon }}</mat-icon>
+              <span>{{ item.label }}</span>
+            </a>
+          }
+        </div>
+      }
     </nav>
 
     <div class="p-4 border-t border-white/10">
@@ -130,6 +72,7 @@
       <button mat-button [matMenuTriggerFor]="userMenu" class="!text-slate-700 hidden sm:flex">
         <mat-icon>account_circle</mat-icon>
         <span class="max-w-32 truncate">{{ auth.user()?.name }}</span>
+        <span class="user-rol">{{ rolNombre() ?? 'Usuario' }}</span>
       </button>
       <mat-menu #userMenu="matMenu">
         <button mat-menu-item (click)="auth.logout().subscribe()">
