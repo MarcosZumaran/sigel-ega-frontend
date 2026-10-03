@@ -12,12 +12,15 @@ peer de `@swimlane/ngx-charts`. No se modificó ninguna dependencia.
   (nadie ejecuta el router en servidor)
 - **Plan**: Se corrige solo con la actualización a Angular 22 (Fase 2)
 
-## xlsx@0.18.5 (high)
+## xlsx@0.18.5 → exceljs@4.4.0 (resuelto, Fase 2.5 — 2026-10-03)
 
 - **CVE**: Prototype pollution + ReDoS (GHSA-4r6h-8v6p-xvw6, GHSA-5pgg-2g8v-p4x9)
-- **Impacto**: Procesa archivos subidos por usuarios (import SIAGIE)
-- **Plan**: Reemplazar por `exceljs` en Fase 2
-- **Mitigación temporal**: Validar tamaño y tipo de archivo antes de procesar
+- **Razón**: xlsx 0.18.5 tiene 2 vulnerabilidades sin fix disponible en su rama.
+- **Reemplazo**: `exceljs` (mantenida activamente, sin vulnerabilidades conocidas).
+- **Impacto**: reducción de superficie de ataque al procesar archivos de usuario.
+- **Notas**: `npm install` requirió `--legacy-peer-deps` por conflicto preexistente
+  de peers (`@swimlane/ngx-charts` vs Angular 21/22), no relacionado con exceljs.
+  `npm audit` post-migración: 0 referencias a xlsx.
 
 ## piscina@5.x (critical)
 
@@ -28,7 +31,7 @@ peer de `@swimlane/ngx-charts`. No se modificó ninguna dependencia.
 
 ## Optimización de bundle (Fase 2)
 
-- `xlsx` y `jspdf` ya usan `await import()` dinámico en
+- `exceljs` y `jspdf` usan `await import()` dinámico en
   `asistencias-matricial.component.ts` — fuera del bundle inicial, sin acción.
 - `ngx-charts` se importa eager en `estadisticas-dashboard.component.ts`
   (~191 kB), pero esa ruta es lazy-loaded (chunk propio). Evaluar reemplazo
