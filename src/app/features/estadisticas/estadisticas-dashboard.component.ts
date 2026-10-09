@@ -1,13 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { forkJoin } from 'rxjs';
 import { EstadisticaService } from './services/estadistica.service';
 import { CatalogosService } from '../../core/services/catalogos.service';
@@ -22,26 +20,19 @@ import {
 import { Periodo } from '../../core/models/periodo.model';
 import { Seccion } from '../../core/models/seccion.model';
 
-const LOGRO_COLORS = [
-  { name: 'AD', value: '#16a34a' },
-  { name: 'A', value: '#2563eb' },
-  { name: 'B', value: '#eab308' },
-  { name: 'C', value: '#dc2626' },
-];
+type NivelCneb = 'AD' | 'A' | 'B' | 'C';
 
 @Component({
   selector: 'app-estadisticas-dashboard',
   standalone: true,
   imports: [
+    NgClass,
     ReactiveFormsModule,
-    MatCardModule,
     MatFormFieldModule,
+    MatIconModule,
     MatSelectModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatTableModule,
-    MatProgressBarModule,
-    NgxChartsModule,
   ],
   templateUrl: './estadisticas-dashboard.component.html',
   styleUrl: './estadisticas-dashboard.component.scss',
@@ -51,16 +42,14 @@ export class EstadisticasDashboardComponent implements OnInit {
   periodos = signal<Periodo[]>([]);
   secciones = signal<Seccion[]>([]);
   dashboard = signal<DashboardEstadisticas | null>(null);
-  nivelesChart: { name: string; value: number }[] = [];
-  logrosChart: { name: string; value: number }[] = [];
-  asistenciaChart: { name: string; series: { name: string; value: number }[] }[] = [];
+  niveles: MatriculasPorNivel[] = [];
+  nivelMax = 0;
+  logros: LogroCneb[] = [];
+  mensual: AsistenciaMensual[] = [];
   ocupacion = signal<OcupacionSeccion[]>([]);
 
   fPeriodo = new FormControl<number | null>(null);
   fSeccion = new FormControl<number | null>(null);
-
-  logroColors = LOGRO_COLORS;
-  ocupacionCols = ['seccion', 'grado', 'ocupadas', 'vacantes', 'capacidad', 'ocupacion'];
 
   constructor(
     private stats: EstadisticaService,
@@ -96,8 +85,23 @@ export class EstadisticasDashboardComponent implements OnInit {
     this.cargarGraficos();
   }
 
-  trackOcupacion(_i: number, r: OcupacionSeccion): string {
-    return r.seccion;
+  pctNivel(total: number): number {
+    return this.nivelMax ? Math.round((total / this.nivelMax) * 100) : 0;
+  }
+
+  conteoNivel(nivel: NivelCneb): number {
+    return this.logros.find((x) => x.nivel === nivel)?.total ?? 0;
+  }
+
+  pctOcupacion(r: OcupacionSeccion): number {
+    return r.capacidad ? Math.round((r.ocupadas / r.capacidad) * 100) : 0;
+  }
+
+  claseOcupacion(r: OcupacionSeccion): 'ocupacion-alta' | 'ocupacion-media' | 'ocupacion-baja' {
+    const pct = this.pctOcupacion(r);
+    if (pct > 80) return 'ocupacion-alta';
+    if (pct >= 50) return 'ocupacion-media';
+    return 'ocupacion-baja';
   }
 
   private cargarGraficos(): void {
@@ -112,9 +116,10 @@ export class EstadisticasDashboardComponent implements OnInit {
       ocupacion: this.stats.getOcupacionSecciones(periodoId),
     }).subscribe({
       next: (r) => {
-        this.nivelesChart = r.niveles.map((x) => ({ name: x.nivel, value: x.total }));
-        this.logrosChart = r.logros.map((x) => ({ name: x.nivel, value: x.total }));
-        this.asistenciaChart = this.aMensual(r.mensual);
+        this.niveles = r.niveles;
+        this.nivelMax = Math.max(0, ...r.niveles.map((x) => x.total));
+        this.logros = r.logros;
+        this.mensual = r.mensual;
         this.ocupacion.set(r.ocupacion);
         this.loading.set(false);
       },
@@ -123,17 +128,5 @@ export class EstadisticasDashboardComponent implements OnInit {
         this.snack.open(extractApiError(err, 'No se pudieron cargar las estadisticas'), 'Cerrar', { duration: 4000 });
       },
     });
-  }
-
-  private aMensual(rows: AsistenciaMensual[]): { name: string; series: { name: string; value: number }[] }[] {
-    return rows.map((r) => ({
-      name: r.mes,
-      series: [
-        { name: 'Presentes', value: r.presentes },
-        { name: 'Tardanzas', value: r.tardanzas },
-        { name: 'Ausentes', value: r.ausentes },
-        { name: 'Justificados', value: r.justificados },
-      ],
-    }));
   }
 }

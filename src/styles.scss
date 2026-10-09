@@ -336,6 +336,7 @@ mat-card,
     vertical-align: middle;
   }
   tbody tr:hover td { background: #F8FAFC; }
+}
 /* ═══════════════════════════════════════════════════════════
    FLAT VIBRANTE (Windows 8 Tiles + Asphalt)
    Componentes propios: no dependen de mat-card.
@@ -660,4 +661,47 @@ button.quick-action:hover {
 
 .page-header .mat-mdc-outlined-button mat-icon {
   color: #FFFFFF !important;
+}
+/* Contraste de botones: outlined con borde 2px + fondo blanco + texto azul oscuro */
+.mat-mdc-outlined-button {
+  border: 2px solid #1E3A8A !important;
+  background: #FFFFFF !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  color: #1E3A8A !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+  padding: 0.5rem 1.25rem !important;
+  box-shadow: 0 2px 8px -2px rgba(30, 58, 138, 0.15) !important;
+
+  &:hover {
+    background: #EFF6FF !important;
+    box-shadow: 0 4px 12px -2px rgba(30, 58, 138, 0.25) !important;
+  }
+
+  mat-icon, .mat-icon { color: #1E3A8A !important; }
+}
+
+/* Botones naranja (quick actions): naranja oscuro para contraste AA */
+.quick-action {
+  background: #EA580C !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+
+  &:hover { background: #C2410C !important; }
+}
+
+/* Iconos de acciones (ver/editar/eliminar): fondo redondo sutil al hover */
+.mat-mdc-icon-button {
+  border-radius: 8px !important;
+
+  &[color="primary"] {
+    color: #1E3A8A !important;
+    &:hover { background: rgba(30, 58, 138, 0.08) !important; }
+  }
+
+  &[color="warn"], &[color="danger"] {
+    color: #EF4444 !important;
+    &:hover { background: rgba(239, 68, 68, 0.08) !important; }
+  }
 }
