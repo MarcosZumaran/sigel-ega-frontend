@@ -4,7 +4,8 @@
 
 .app-sidebar {
   width: 18rem;
-  background-color: #0F172A !important;
+  background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%) !important;
+  box-shadow: 4px 0 24px -4px rgba(15, 23, 42, 0.3);
   color: #fff;
   border: none !important;
   display: flex;
