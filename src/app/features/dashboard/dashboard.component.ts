@@ -1,7 +1,6 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -26,12 +25,12 @@ interface Acceso {
 }
 
 const ACCESOS: Acceso[] = [
-  { titulo: 'Matricular', descripcion: 'Registrar nueva matricula', icono: 'assignment', ruta: '/matriculas/create', color: 'bg-[#1E3A8A]/10 text-[#1E3A8A]' },
-  { titulo: 'Alumnos', descripcion: 'Ver estudiantes', icono: 'school', ruta: '/estudiantes', color: 'bg-emerald-100 text-emerald-700' },
-  { titulo: 'Notas', descripcion: 'Calificaciones y evaluacion', icono: 'grade', ruta: '/notas', color: 'bg-amber-100 text-amber-700' },
-  { titulo: 'Asistencias', descripcion: 'Registro diario', icono: 'check_circle', ruta: '/asistencias', color: 'bg-red-100 text-[#C8102E]' },
-  { titulo: 'Reportes', descripcion: 'Generar y descargar', icono: 'description', ruta: '/reportes', color: 'bg-slate-200 text-slate-700' },
-  { titulo: 'Apoderados', descripcion: 'Hub padres-estudiantes', icono: 'link', ruta: '/apoderados', color: 'bg-sky-100 text-sky-700' },
+  { titulo: 'Matricular', descripcion: 'Registrar nueva matricula', icono: 'assignment', ruta: '/matriculas/create', color: 'tile-blue' },
+  { titulo: 'Alumnos', descripcion: 'Ver estudiantes', icono: 'school', ruta: '/estudiantes', color: 'tile-green' },
+  { titulo: 'Notas', descripcion: 'Calificaciones y evaluacion', icono: 'grade', ruta: '/notas', color: 'tile-orange' },
+  { titulo: 'Asistencias', descripcion: 'Registro diario', icono: 'check_circle', ruta: '/asistencias', color: 'tile-red' },
+  { titulo: 'Reportes', descripcion: 'Generar y descargar', icono: 'description', ruta: '/reportes', color: 'tile-purple' },
+  { titulo: 'Apoderados', descripcion: 'Hub padres-estudiantes', icono: 'link', ruta: '/apoderados', color: 'tile-cyan' },
 ];
 
 function hoyLocal(): string {
@@ -44,7 +43,7 @@ function hoyLocal(): string {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, DatePipe, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatSnackBarModule, MatListModule, MatDividerModule],
+  imports: [RouterLink, DatePipe, MatIconModule, MatButtonModule, MatProgressSpinnerModule, MatSnackBarModule, MatListModule, MatDividerModule],
   template: `
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-slate-900">Bienvenido, {{ auth.user()?.name ?? 'usuario' }}</h1>
@@ -52,16 +51,14 @@ function hoyLocal(): string {
     </div>
 
     <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">Accesos directos</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+    <div class="tile-grid mb-8">
       @for (a of accesos; track a.ruta) {
-        <a [routerLink]="a.ruta" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 {{ a.color }}">
+        <a [routerLink]="a.ruta" class="tile {{ a.color }}">
+          <div class="tile-icon">
             <mat-icon>{{ a.icono }}</mat-icon>
           </div>
-          <div>
-            <p class="font-semibold text-slate-900">{{ a.titulo }}</p>
-            <p class="text-sm text-slate-500">{{ a.descripcion }}</p>
-          </div>
+          <h3>{{ a.titulo }}</h3>
+          <p>{{ a.descripcion }}</p>
         </a>
       }
     </div>
@@ -71,12 +68,14 @@ function hoyLocal(): string {
       <div class="flex justify-center py-12"><mat-spinner diameter="40"></mat-spinner></div>
     } @else {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>Ultimas matriculas</mat-card-title>
-            <mat-card-subtitle>Las 5 mas recientes</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
+        <div class="flat-card">
+          <div class="flat-card-header">
+            <div class="flat-card-icon icon-blue"><mat-icon>assignment</mat-icon></div>
+            <div>
+              <h3>Ultimas matriculas</h3>
+              <p>Las 5 mas recientes</p>
+            </div>
+          </div>
             @if (ultimasMatriculas().length) {
               <mat-list>
                 @for (m of ultimasMatriculas(); track m.id) {
@@ -91,18 +90,19 @@ function hoyLocal(): string {
             } @else {
               <p class="text-sm text-slate-500">No hay matriculas registradas.</p>
             }
-          </mat-card-content>
-          <mat-card-actions>
-            <a mat-button class="!text-[#1E3A8A]" routerLink="/matriculas">Ver todas</a>
-          </mat-card-actions>
-        </mat-card>
+          <div class="mt-3">
+            <a class="quick-action" routerLink="/matriculas"><mat-icon>visibility</mat-icon> Ver todas</a>
+          </div>
+        </div>
 
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>Asistencia de hoy</mat-card-title>
-            <mat-card-subtitle>{{ hoy | date:"d 'de' MMMM 'de' y, HH:mm" }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
+        <div class="flat-card">
+          <div class="flat-card-header">
+            <div class="flat-card-icon icon-green"><mat-icon>check_circle</mat-icon></div>
+            <div>
+              <h3>Asistencia de hoy</h3>
+              <p>{{ hoy | date:"d 'de' MMMM 'de' y, HH:mm" }}</p>
+            </div>
+          </div>
             @if (asistenciaHoy().length) {
               <div class="flex gap-6 py-2">
                 <div class="text-center">
@@ -125,11 +125,10 @@ function hoyLocal(): string {
             } @else {
               <p class="text-sm text-slate-500">Aún no se registra la asistencia de hoy.</p>
             }
-          </mat-card-content>
-          <mat-card-actions>
-            <a mat-button class="!text-[#1E3A8A]" routerLink="/asistencias/create">Registrar asistencia</a>
-          </mat-card-actions>
-        </mat-card>
+          <div class="mt-3">
+            <a class="quick-action" routerLink="/asistencias/create"><mat-icon>add</mat-icon> Registrar asistencia</a>
+          </div>
+        </div>
       </div>
     }
   `,
