@@ -14,6 +14,8 @@ interface MenuItem {
   url: string;
   icon: string;
   exact?: boolean;
+  /** Color del icono del modulo (flat vibrante). */
+  color?: string;
   /** Si se define, el item solo se muestra a estos roles (hereda la sección si se omite). */
   roles?: string[];
 }
@@ -29,36 +31,36 @@ const MENU_COMPLETO: MenuSeccion[] = [
     titulo: 'Alumnado y Padres',
     roles: ['ADMIN', 'DIRECTOR'],
     items: [
-      { label: 'Padres de Familia', url: '/padres', icon: 'family_restroom' },
-      { label: 'Estudiantes', url: '/estudiantes', icon: 'school' },
-      { label: 'Apoderados', url: '/apoderados', icon: 'link' },
+      { label: 'Padres de Familia', url: '/padres', icon: 'family_restroom', color: '#06B6D4' },
+      { label: 'Estudiantes', url: '/estudiantes', icon: 'school', color: '#10B981' },
+      { label: 'Apoderados', url: '/apoderados', icon: 'link', color: '#8B5CF6' },
     ],
   },
   {
     titulo: 'Gestión Académica',
     roles: ['ADMIN', 'DIRECTOR', 'DOCENTE'],
     items: [
-      { label: 'Matrículas', url: '/matriculas', icon: 'app_registration', roles: ['ADMIN', 'DIRECTOR'] },
-      { label: 'Notas', url: '/notas', icon: 'grade' },
-      { label: 'Asistencias', url: '/asistencias', icon: 'fact_check' },
-      { label: 'Historial asistencias', url: '/asistencias/historial', icon: 'history', exact: true },
+      { label: 'Matrículas', url: '/matriculas', icon: 'app_registration', color: '#60A5FA', roles: ['ADMIN', 'DIRECTOR'] },
+      { label: 'Notas', url: '/notas', icon: 'grade', color: '#FBBF24' },
+      { label: 'Asistencias', url: '/asistencias', icon: 'fact_check', color: '#34D399' },
+      { label: 'Historial asistencias', url: '/asistencias/historial', icon: 'history', color: '#94A3B8', exact: true },
     ],
   },
   {
     titulo: 'Infraestructura',
     roles: ['ADMIN'],
     items: [
-      { label: 'Períodos', url: '/periodos', icon: 'calendar_month' },
-      { label: 'Grados', url: '/grados', icon: 'layers' },
-      { label: 'Secciones', url: '/secciones', icon: 'view_module' },
+      { label: 'Períodos', url: '/periodos', icon: 'calendar_month', color: '#F472B6' },
+      { label: 'Grados', url: '/grados', icon: 'layers', color: '#A78BFA' },
+      { label: 'Secciones', url: '/secciones', icon: 'view_module', color: '#22D3EE' },
     ],
   },
   {
     titulo: 'Reportes',
     roles: ['ADMIN', 'DIRECTOR'],
     items: [
-      { label: 'Reportes', url: '/reportes', icon: 'description' },
-      { label: 'Estadísticas', url: '/estadisticas', icon: 'bar_chart' },
+      { label: 'Reportes', url: '/reportes', icon: 'description', color: '#F87171' },
+      { label: 'Estadísticas', url: '/estadisticas', icon: 'bar_chart', color: '#4ADE80' },
     ],
   },
 ];

@@ -74,7 +74,6 @@ import type { Asistencia } from '../../core/models/asistencia.model';
     }
   `,
   styles: [`
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.75rem; }
     .justify { margin-top: 1rem; }
     .full-width { width: 100%; }

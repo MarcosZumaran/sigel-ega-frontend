@@ -74,9 +74,6 @@ import { CatalogosService } from '../../core/services/catalogos.service';
     </mat-card>
   `,
   styles: [`
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .page-header h1 { margin: 0; color: #1E3A8A; }
-    .page-header p { margin: 0.25rem 0 0; color: #64748b; }
     .full-width { width: 100%; }
     .loading { display: flex; justify-content: center; padding: 2rem; }
     .empty { text-align: center; color: #64748b; padding: 1.5rem; }

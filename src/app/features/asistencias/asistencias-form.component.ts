@@ -101,7 +101,6 @@ interface FilaAsistencia {
     </mat-card>
   `,
   styles: [`
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     .filter-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
     .spacer { flex: 1 1 auto; }
     .filters { margin-bottom: 1rem; }
