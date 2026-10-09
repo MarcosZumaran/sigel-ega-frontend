@@ -24,7 +24,7 @@
       @if (bimestreRango()) {
         <p class="bim-rango">{{ bimestreRango() }}</p>
       }
-      <p class="sub">Registra la nota 0–20 por competencia; el nivel se calcula solo.</p>
+      <p class="sub">El nivel de logro se calcula automáticamente desde las actividades registradas.</p>
     </div>
     <div class="actions">
       <button mat-stroked-button (click)="exportar('xlsx')"><mat-icon>table_view</mat-icon> Excel</button>
@@ -40,6 +40,11 @@
   @if (!filas().length) {
     <mat-card class="empty"><mat-card-content>No hay competencias configuradas.</mat-card-content></mat-card>
   } @else {
+    <div class="info-row">
+      <mat-icon>info</mat-icon>
+      <span>El nivel se calcula automáticamente desde las actividades. Haga clic en "+ Agregar" para registrar una nueva actividad.</span>
+    </div>
+
     <div class="table-scroll">
       <table class="excel" aria-label="Notas por competencia">
         <thead>
@@ -47,8 +52,8 @@
             <th class="c-n">N°</th>
             <th class="c-area">ÁREA</th>
             <th class="c-comp">COMPETENCIA</th>
-            <th class="c-nota">NOTA</th>
             <th class="c-nivel">NIVEL</th>
+            <th class="c-act">ACTIVIDADES</th>
             <th class="c-conc">CONCLUSIÓN</th>
           </tr>
         </thead>
@@ -58,21 +63,28 @@
               <td class="c-n">{{ i + 1 }}</td>
               <td class="c-area">{{ f.areaPadre?.nombre ?? '—' }}</td>
               <td class="c-comp">{{ f.competencia.nombre }}</td>
-              <td class="c-nota">
-                <input
-                  type="number" min="0" max="20" step="0.5"
-                  [value]="f.nota ?? ''"
-                  [readonly]="esCerrado()"
-                  [attr.aria-label]="'Nota ' + f.competencia.nombre"
-                  [class.modificada]="f.dirty"
-                  (blur)="onNotaInput(f, $any($event.target).value)"
-                  (keydown.enter)="$any($event.target).blur()"
-                  (keydown.escape)="$any($event.target).blur()" />
-              </td>
               <td class="c-nivel">
                 @if (f.nivel) {
                   <span class="badge niv-{{ f.nivel }}">{{ f.nivel }}</span>
-                } @else { <span class="vacio">—</span> }
+                } @else if (actividadesDe(f.competencia.id) > 0) {
+                  <span class="vacio">—</span>
+                } @else {
+                  <span class="sin-act">Sin actividades</span>
+                }
+              </td>
+              <td class="c-act">
+                <div class="act-cell">
+                  <span class="act-count" [class.sin-act]="actividadesDe(f.competencia.id) === 0">
+                    {{ actividadesDe(f.competencia.id) }} activ.
+                  </span>
+                  <button mat-stroked-button
+                          class="btn-add"
+                          (click)="agregarActividad(f)"
+                          [disabled]="esCerrado()"
+                          aria-label="Agregar actividad">
+                    <mat-icon>add</mat-icon> Agregar
+                  </button>
+                </div>
               </td>
               <td class="c-conc">
                 <input

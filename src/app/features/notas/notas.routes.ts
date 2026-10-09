@@ -6,6 +6,7 @@ export const NOTAS_ROUTES: Routes = [
   { path: 'estudiante/:estudianteId', data: { breadcrumb: 'Estudiante' }, loadComponent: () => import('./notas-estudiante.component').then((m) => m.NotasEstudianteComponent) },
   { path: 'estudiante/:estudianteId/bimestre/:bimestreId', data: { breadcrumb: 'Bimestre' }, loadComponent: () => import('./notas-bimestre.component').then((m) => m.NotasBimestreComponent) },
   { path: 'consolidado', data: { breadcrumb: 'Consolidado' }, loadComponent: () => import('./notas-consolidado.component').then((m) => m.NotasConsolidadoComponent) },
+  { path: 'actividades/nueva', data: { breadcrumb: 'Nueva actividad' }, loadComponent: () => import('./actividad-wizard.component').then((m) => m.ActividadWizardComponent) },
   { path: 'estudiante/:estudianteId/informe', data: { breadcrumb: 'Informe' }, loadComponent: () => import('./notas-informe.component').then((m) => m.NotasInformeComponent) },
   { path: ':id', data: { breadcrumb: 'Detalle' }, loadComponent: () => import('./notas-show.component').then((m) => m.NotasShowComponent) },
 ];
