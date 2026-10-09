@@ -1,91 +1,48 @@
 :host { display: block; font-size: 0.875rem; }
-.page-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+.page-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
 .crumbs { display: flex; gap: 0.4rem; font-size: 0.8rem; color: #64748b; }
 .crumbs a { color: #1e3a8a; text-decoration: none; }
 .center { display: flex; justify-content: center; padding: 2rem; }
-.head-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-.head-row h1 { margin: 0; font-size: 1.25rem; color: #0f172a; }
-.sub { margin: 0.25rem 0 0; color: #64748b; font-size: 0.8rem; }
-.actions { display: flex; gap: 0.5rem; align-items: center; }
-.empty { margin-top: 1rem; }
 .warn { margin-bottom: 0.75rem; border-left: 4px solid #f59e0b; }
 .cerrado { margin-bottom: 0.75rem; border-left: 4px solid #f59e0b; background: #fffbeb; }
 .cerrado mat-card-content { display: flex; align-items: center; gap: 0.5rem; color: #92400e; font-weight: 500; }
-.excel input[readonly] { background: #f1f5f9; color: #64748b; }
-.table-scroll { overflow: auto; border: 1px solid #cbd5e1; border-radius: 0.5rem; background: #fff; }
-table.excel { border-collapse: collapse; width: 100%; min-width: 900px; }
-.excel thead th { position: sticky; top: 0; background: #f1f5f9; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.04em; color: #475569; border-bottom: 1px solid #cbd5e1; padding: 0.5rem; text-align: left; z-index: 2; }
-.excel td { border-bottom: 1px solid #e2e8f0; padding: 0.4rem 0.5rem; height: 48px; }
-.excel tbody tr:nth-child(even) { background: #f8fafc; }
-.c-n { width: 3rem; text-align: center; color: #64748b; }
-.c-nota input { width: 80px; height: 40px; text-align: center; border: 1px solid #cbd5e1; border-radius: 0.375rem; }
-.c-nota input.modificada { border-color: #2563eb; box-shadow: inset 0 0 0 1px #2563eb; }
-.c-conc { position: relative; }
-.c-conc input { width: 100%; min-width: 220px; border: 1px solid #cbd5e1; border-radius: 0.375rem; padding: 0.4rem 0.5rem; }
-.c-conc input.sin-motivo { border: 1px dashed #dc2626; }
-.alerta { color: #dc2626; font-weight: 700; margin-left: 0.4rem; cursor: pointer; }
-.badge { display: inline-block; min-width: 2rem; text-align: center; font-weight: 700; border-radius: 0.375rem; padding: 0.15rem 0.5rem; }
-.niv-AD { background: #dcfce7; color: #166534; }
-.niv-A { background: #dbeafe; color: #1d4ed8; }
-.niv-B { background: #fef9c3; color: #854d0e; }
-.niv-C { background: #fee2e2; color: #b91c1c; }
+
+.head-card { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+.head-card:hover { transform: none; }
+.head-icon {
+  width: 56px; height: 56px; border-radius: 14px; background: #1E3A8A;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  mat-icon { font-size: 30px; width: 30px; height: 30px; color: #fff; }
+}
+.head-text h1 { margin: 0; font-size: 1.25rem; font-weight: 800; color: #0f172a; }
+.bim-rango { margin: 0.15rem 0 0; color: #1e3a8a; font-weight: 600; font-size: 0.8rem; }
+.sub { margin: 0.25rem 0 0; color: #64748b; font-size: 0.8rem; }
+.spacer { flex: 1; }
+.actions { display: flex; gap: 0.5rem; align-items: center; }
+
+.table-scroll { overflow-x: auto; }
+.table-scroll .flat-table { min-width: 960px; }
+.c-n { width: 3rem; text-align: center; }
+.c-nivel { text-align: center; }
+.comp-nombre { font-weight: 600; color: #0f172a; }
 .vacio { color: #94a3b8; }
-
-.info-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.75rem;
-  background: #eff6ff;
-  border-left: 4px solid #3b82f6;
-  border-radius: 0.375rem;
-  font-size: 0.8rem;
-  color: #1e40af;
-
-  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+.c-conc { min-width: 220px; }
+.alerta {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.4rem; height: 1.4rem; border-radius: 50%;
+  background: #C8102E; color: #fff; font-weight: 800; margin-left: 0.4rem;
 }
 
-.c-act {
-  width: 170px;
-  text-align: center;
-}
-
-.act-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  align-items: center;
-}
-
+.c-act { text-align: center; }
+.act-cell { display: flex; flex-direction: column; gap: 0.35rem; align-items: center; }
 .act-count {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #1e3a8a;
-
-  &.sin-act {
-    color: #94a3b8;
-    font-weight: 400;
-  }
+  font-size: 0.8rem; font-weight: 700; color: #1e3a8a;
+  background: #DBEAFE; border: 2px solid #1e3a8a; border-radius: 8px;
+  padding: 0.15rem 0.6rem; cursor: pointer;
+  &.sin-act { color: #94a3b8; background: #F1F5F9; border-color: #CBD5E1; font-weight: 400; }
 }
-
 .btn-add {
-  font-size: 0.72rem;
-  min-width: auto;
-  padding: 0 0.5rem;
-  height: 28px;
-  line-height: 26px;
-
-  mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-    margin-right: 2px;
-  }
+  font-size: 0.75rem; padding: 0.3rem 0.7rem;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
 }
-
-.sin-act {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  font-style: italic;
-}
+.sin-act { font-size: 0.75rem; color: #94a3b8; font-style: italic; }

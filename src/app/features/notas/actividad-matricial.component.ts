@@ -31,7 +31,7 @@ const NIVELES: NivelLogro[] = ['AD', 'A', 'B', 'C'];
   standalone: true,
   imports: [BackButtonComponent, DatePipe, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatSnackBarModule, MatDialogModule],
   template: `
-    <app-back-button [routerLink]="['/notas']" label="Notas" />
+    <app-back-button />
     <div class="flat-section-header">
       <mat-icon>assignment</mat-icon>
       <span>Actividades de {{ competenciaNombre() }}</span>
