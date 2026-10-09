@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
 import { CalificacionService } from './services/calificacion.service';
+import { ActividadService } from './services/actividad.service';
 import { MatriculaService } from '../matriculas/services/matricula.service';
 import { EstudianteService } from '../estudiantes/services/estudiante.service';
 import { CatalogosService } from '../../core/services/catalogos.service';
@@ -59,10 +60,13 @@ export class NotasBimestreComponent implements OnInit {
   filas = signal<FilaBim[]>([]);
   seccionId = signal(0);
   periodoId = signal(0);
+  actividadesPorCompetencia = signal<Record<number, number>>({});
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private califs: CalificacionService,
+    private actividades: ActividadService,
     private matriculasSvc: MatriculaService,
     private estudiantesSvc: EstudianteService,
     private catalogos: CatalogosService,
@@ -77,6 +81,12 @@ export class NotasBimestreComponent implements OnInit {
     this.bimestreId.set(Number(this.route.snapshot.paramMap.get('bimestreId') ?? 0));
     this.bimestre.set(0);
     this.load();
+    // Recargar actividades cuando se vuelve del wizard
+    this.route.queryParams.subscribe(() => {
+      if (this.seccionId()) {
+        this.cargarActividades();
+      }
+    });
   }
 
   nombreCompleto(): string {
@@ -247,11 +257,47 @@ export class NotasBimestreComponent implements OnInit {
           })
         );
         this.loading.set(false);
+        this.cargarActividades();
       },
       error: (err) => {
         this.loading.set(false);
         this.snack.open(extractApiError(err, 'No se pudo cargar'), 'Cerrar', { duration: 4000 });
       },
     });
+  }
+
+  private cargarActividades(): void {
+    const seccionId = this.seccionId();
+    if (!seccionId) {
+      this.actividadesPorCompetencia.set({});
+      return;
+    }
+    this.actividades.getAll({
+      seccion_id: seccionId,
+      bimestre_id: this.bimestreId(),
+    }).subscribe({
+      next: (acts) => {
+        const conteo: Record<number, number> = {};
+        for (const a of acts) {
+          conteo[a.competencia_id] = (conteo[a.competencia_id] ?? 0) + 1;
+        }
+        this.actividadesPorCompetencia.set(conteo);
+      },
+      error: () => this.actividadesPorCompetencia.set({}),
+    });
+  }
+
+  agregarActividad(fila: FilaBim): void {
+    this.router.navigate(['/notas/actividades/nueva'], {
+      queryParams: {
+        competencia_id: fila.competencia.id,
+        bimestre_id: this.bimestreId(),
+        seccion_id: this.seccionId(),
+      },
+    });
+  }
+
+  actividadesDe(competenciaId: number): number {
+    return this.actividadesPorCompetencia()[competenciaId] ?? 0;
   }
 }
