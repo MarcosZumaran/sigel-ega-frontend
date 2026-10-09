@@ -179,3 +179,87 @@ mat-card {
   from { opacity: 0; transform: scale(0.95) translateY(-8px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   FLAT DESIGN VIBRANTE — sistema reusable SIGEL-EGA
+   Colores planos, bordes definidos 2-3px, sin sombras difusas.
+   ═══════════════════════════════════════════════════════════ */
+
+.flat-tile {
+  background: #fff;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  &:hover { border-color: #1E3A8A; transform: translateY(-2px); }
+  &.accent-blue { border-left: 4px solid #1E3A8A; }
+  &.accent-green { border-left: 4px solid #10B981; }
+  &.accent-orange { border-left: 4px solid #F59E0B; }
+  &.accent-red { border-left: 4px solid #EF4444; }
+}
+
+.flat-section-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem 1rem; background: #1E3A8A; color: #fff;
+  border-radius: 8px 8px 0 0; font-weight: 600;
+  mat-icon { font-size: 22px; width: 22px; height: 22px; }
+  .spacer { flex: 1; }
+}
+
+.flat-badge-nivel {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 2.5rem; height: 2.5rem; border-radius: 8px;
+  font-weight: 700; font-size: 1.1rem; border: 2px solid currentColor;
+  &.niv-AD { background: #D1FAE5; color: #065F46; border-color: #065F46; }
+  &.niv-A  { background: #DBEAFE; color: #1E40AF; border-color: #1E40AF; }
+  &.niv-B  { background: #FEF3C7; color: #92400E; border-color: #92400E; }
+  &.niv-C  { background: #FECACA; color: #991B1B; border-color: #991B1B; }
+}
+
+.flat-btn-primary {
+  background: #1E3A8A; color: #fff; border: 2px solid #1E3A8A;
+  padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s ease;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  &:hover { background: #0F172A; border-color: #0F172A; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.flat-empty {
+  text-align: center; padding: 3rem 2rem;
+  .flat-empty-icon {
+    width: 80px; height: 80px; margin: 0 auto 1rem;
+    border-radius: 20px; background: #EFF6FF;
+    display: flex; align-items: center; justify-content: center;
+    mat-icon { font-size: 42px; width: 42px; height: 42px; color: #1E3A8A; }
+  }
+  h3 { color: #0F172A; margin: 0 0 0.5rem; }
+  p  { color: #64748B; margin: 0 auto 1.5rem; max-width: 400px; }
+}
+
+.flat-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: 2px solid #E2E8F0;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+  thead th {
+    background: #1E3A8A;
+    color: #fff;
+    font-weight: 700;
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 0.6rem 0.75rem;
+    border-top: 2px solid #E2E8F0;
+    vertical-align: middle;
+  }
+  tbody tr:hover td { background: #F8FAFC; }
+}

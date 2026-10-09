@@ -18,54 +18,50 @@
   @if (esCerrado()) {
     <mat-card class="cerrado"><mat-card-content><mat-icon>lock</mat-icon> Bimestre cerrado. Solo lectura.</mat-card-content></mat-card>
   }
-  <div class="head-row">
-    <div>
+  <div class="flat-tile accent-blue head-card">
+    <div class="head-icon"><mat-icon>grade</mat-icon></div>
+    <div class="head-text">
       <h1>{{ bimestreNombre() || 'Bimestre' }} — {{ nombreCompleto() }}</h1>
       @if (bimestreRango()) {
         <p class="bim-rango">{{ bimestreRango() }}</p>
       }
-      <p class="sub">El nivel de logro se calcula automáticamente desde las actividades registradas.</p>
+      <p class="sub">El nivel de logro se gestiona desde las actividades registradas por competencia.</p>
     </div>
+    <span class="spacer"></span>
     <div class="actions">
       <button mat-stroked-button (click)="exportar('xlsx')"><mat-icon>table_view</mat-icon> Excel</button>
       <button mat-stroked-button (click)="exportar('pdf')"><mat-icon>picture_as_pdf</mat-icon> PDF</button>
-      @if (!esCerrado()) {
-        <button mat-flat-button color="primary" (click)="saveAll()" [disabled]="!pendientes() || saving()">
-          @if (saving()) { <mat-spinner diameter="18"></mat-spinner> } @else { Guardar ({{ pendientes() }}) }
-        </button>
-      }
     </div>
   </div>
 
-  @if (!filas().length) {
-    <mat-card class="empty"><mat-card-content>No hay competencias configuradas.</mat-card-content></mat-card>
-  } @else {
-    <div class="info-row">
-      <mat-icon>info</mat-icon>
-      <span>El nivel se calcula automáticamente desde las actividades. Haga clic en "+ Agregar" para registrar una nueva actividad.</span>
+  @if (!niveles().length) {
+    <div class="flat-empty">
+      <div class="flat-empty-icon"><mat-icon>grade</mat-icon></div>
+      <h3>Sin competencias</h3>
+      <p>No hay competencias configuradas para este nivel.</p>
     </div>
-
+  } @else {
     <div class="table-scroll">
-      <table class="excel" aria-label="Notas por competencia">
+      <table class="flat-table" aria-label="Niveles por competencia">
         <thead>
           <tr>
             <th class="c-n">N°</th>
-            <th class="c-area">ÁREA</th>
-            <th class="c-comp">COMPETENCIA</th>
-            <th class="c-nivel">NIVEL</th>
-            <th class="c-act">ACTIVIDADES</th>
-            <th class="c-conc">CONCLUSIÓN</th>
+            <th>Área</th>
+            <th>Competencia</th>
+            <th class="c-nivel">Nivel</th>
+            <th class="c-act">Actividades</th>
+            <th>Conclusión</th>
           </tr>
         </thead>
         <tbody>
-          @for (f of filas(); track f.competencia.id; let i = $index) {
+          @for (f of niveles(); track f.competencia.id; let i = $index) {
             <tr>
               <td class="c-n">{{ i + 1 }}</td>
-              <td class="c-area">{{ f.areaPadre?.nombre ?? '—' }}</td>
-              <td class="c-comp">{{ f.competencia.nombre }}</td>
+              <td>{{ f.areaPadre?.nombre ?? '—' }}</td>
+              <td class="comp-nombre">{{ f.competencia.nombre }}</td>
               <td class="c-nivel">
                 @if (f.nivel) {
-                  <span class="badge niv-{{ f.nivel }}">{{ f.nivel }}</span>
+                  <span class="flat-badge-nivel niv-{{ f.nivel }}">{{ f.nivel }}</span>
                 } @else if (actividadesDe(f.competencia.id) > 0) {
                   <span class="vacio">—</span>
                 } @else {
@@ -74,28 +70,23 @@
               </td>
               <td class="c-act">
                 <div class="act-cell">
-                  <span class="act-count" [class.sin-act]="actividadesDe(f.competencia.id) === 0">
+                  <button class="act-count" [class.sin-act]="actividadesDe(f.competencia.id) === 0"
+                          (click)="verActividades(f)"
+                          [attr.aria-label]="'Ver actividades de ' + f.competencia.nombre">
                     {{ actividadesDe(f.competencia.id) }} activ.
-                  </span>
-                  <button mat-stroked-button
-                          class="btn-add"
-                          (click)="agregarActividad(f)"
-                          [disabled]="esCerrado()"
-                          aria-label="Agregar actividad">
-                    <mat-icon>add</mat-icon> Agregar
                   </button>
+                  @if (!esCerrado()) {
+                    <button class="flat-btn-primary btn-add" (click)="agregarActividad(f)" aria-label="Agregar actividad">
+                      <mat-icon>add</mat-icon> Agregar
+                    </button>
+                  }
                 </div>
               </td>
               <td class="c-conc">
-                <input
-                  type="text" maxlength="500" placeholder="Conclusión descriptiva"
-                  [value]="f.conclusion"
-                  [readonly]="esCerrado()"
-                  [attr.aria-label]="'Conclusión ' + f.competencia.nombre"
-                  [class.sin-motivo]="f.nivel === 'C' && !f.conclusion.trim()"
-                  (blur)="f.conclusion = $any($event.target).value; f.dirty = true"
-                  (click)="f.nivel === 'C' && !f.conclusion.trim() && pedirConclusion(f)" />
-                @if (f.nivel === 'C' && !f.conclusion.trim()) { <span class="alerta" title="El nivel C exige conclusión">!</span> }
+                {{ f.conclusion || '—' }}
+                @if (f.nivel === 'C' && !f.conclusion.trim()) {
+                  <span class="alerta" title="El nivel C exige conclusión descriptiva">!</span>
+                }
               </td>
             </tr>
           }
