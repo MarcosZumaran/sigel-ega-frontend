@@ -1,7 +1,5 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 
@@ -20,27 +18,32 @@ export interface ModuleRecentItem {
 @Component({
   selector: 'app-module-home',
   standalone: true,
-  imports: [RouterLink, MatCardModule, MatButtonModule, MatIconModule, MatListModule],
+  imports: [RouterLink, MatIconModule, MatListModule],
   template: `
     <div class="module-home">
-      <mat-card class="actions-card">
-        <mat-card-header>
-          <mat-card-title>{{ moduleName() }}</mat-card-title>
-          <mat-card-subtitle>Acciones rápidas</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="actions">
+      <div class="flat-card">
+        <div class="flat-card-header">
+          <div class="flat-card-icon icon-blue"><mat-icon>{{ headerIcon() }}</mat-icon></div>
+          <div>
+            <h3>{{ moduleName() }}</h3>
+            <p>Acciones rápidas</p>
+          </div>
+        </div>
+        <div class="actions">
           @for (a of actions(); track a.label) {
-            <a mat-stroked-button color="primary" [routerLink]="a.link">
+            <a class="quick-action" [routerLink]="a.link">
               <mat-icon>{{ a.icon }}</mat-icon>{{ a.label }}
             </a>
           }
-        </mat-card-content>
-      </mat-card>
-      <mat-card class="recent-card">
-        <mat-card-header>
-          <mat-card-title>{{ recentTitle() }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
+        </div>
+      </div>
+      <div class="flat-card">
+        <div class="flat-card-header">
+          <div class="flat-card-icon icon-green"><mat-icon>history</mat-icon></div>
+          <div>
+            <h3>{{ recentTitle() }}</h3>
+          </div>
+        </div>
           @if (!items().length) {
             <p class="empty">Sin registros recientes.</p>
           } @else {
@@ -60,8 +63,7 @@ export interface ModuleRecentItem {
               }
             </mat-list>
           }
-        </mat-card-content>
-      </mat-card>
+      </div>
     </div>
   `,
   styles: [`
@@ -76,4 +78,20 @@ export class ModuleHomeComponent {
   actions = input<ModuleQuickAction[]>([]);
   recentTitle = input('Últimos registros');
   items = input<ModuleRecentItem[]>([]);
+
+  /** Icono del header segun el modulo (flat vibrante). */
+  headerIcon(): string {
+    const nombre = this.moduleName().toLowerCase();
+    if (nombre.includes('padre')) return 'family_restroom';
+    if (nombre.includes('estudiante') || nombre.includes('alumno')) return 'school';
+    if (nombre.includes('apoderado')) return 'link';
+    if (nombre.includes('matr')) return 'app_registration';
+    if (nombre.includes('nota')) return 'grade';
+    if (nombre.includes('asistencia')) return 'fact_check';
+    if (nombre.includes('periodo')) return 'calendar_month';
+    if (nombre.includes('grado')) return 'layers';
+    if (nombre.includes('secci')) return 'view_module';
+    if (nombre.includes('reporte')) return 'description';
+    return 'dashboard';
+  }
 }
