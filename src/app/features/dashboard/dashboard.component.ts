@@ -26,11 +26,11 @@ interface Acceso {
 
 const ACCESOS: Acceso[] = [
   { titulo: 'Matricular', descripcion: 'Registrar nueva matricula', icono: 'assignment', ruta: '/matriculas/create', color: 'tile-blue' },
-  { titulo: 'Alumnos', descripcion: 'Ver estudiantes', icono: 'school', ruta: '/estudiantes', color: 'tile-green' },
+  { titulo: 'Alumnos', descripcion: 'Ver estudiantes', icono: 'school', ruta: '/estudiantes', color: 'tile-blue-light' },
   { titulo: 'Notas', descripcion: 'Calificaciones y evaluacion', icono: 'grade', ruta: '/notas', color: 'tile-orange' },
-  { titulo: 'Asistencias', descripcion: 'Registro diario', icono: 'check_circle', ruta: '/asistencias', color: 'tile-red' },
-  { titulo: 'Reportes', descripcion: 'Generar y descargar', icono: 'description', ruta: '/reportes', color: 'tile-purple' },
-  { titulo: 'Apoderados', descripcion: 'Hub padres-estudiantes', icono: 'link', ruta: '/apoderados', color: 'tile-cyan' },
+  { titulo: 'Asistencias', descripcion: 'Registro diario', icono: 'check_circle', ruta: '/asistencias', color: 'tile-blue' },
+  { titulo: 'Reportes', descripcion: 'Generar y descargar', icono: 'description', ruta: '/reportes', color: 'tile-blue-light' },
+  { titulo: 'Apoderados', descripcion: 'Hub padres-estudiantes', icono: 'link', ruta: '/apoderados', color: 'tile-orange' },
 ];
 
 function hoyLocal(): string {

@@ -81,29 +81,68 @@ mat-icon {
   background-color: #F8FAFC !important;
 }
 
-/* Botones estilo Asphalt: solidos, uppercase, sin sombra */
+/* Botones Material: contraste garantizado (texto blanco puro sobre fondo oscuro) */
 .mat-mdc-raised-button.mat-primary,
 .mat-mdc-unelevated-button.mat-primary,
-.mat-mdc-flat-button.mat-primary {
-  background-color: #1E3A8A !important;
-  border-radius: 6px !important;
+.mat-mdc-flat-button.mat-primary,
+button[mat-flat-button][color="primary"],
+button[mat-raised-button][color="primary"] {
+  background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%) !important;
+  color: #FFFFFF !important;
   font-weight: 700 !important;
-  letter-spacing: 0.02em !important;
-  text-transform: uppercase;
-  box-shadow: none !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px -4px rgba(30, 58, 138, 0.4) !important;
+  transition: all 0.2s ease !important;
   padding: 0.5rem 1.25rem !important;
 }
 
-.mat-mdc-raised-button.mat-primary:hover,
-.mat-mdc-unelevated-button.mat-primary:hover,
-.mat-mdc-flat-button.mat-primary:hover {
-  background-color: #0F172A !important;
+.mat-mdc-raised-button.mat-primary:hover:not(:disabled),
+.mat-mdc-unelevated-button.mat-primary:hover:not(:disabled),
+.mat-mdc-flat-button.mat-primary:hover:not(:disabled),
+button[mat-flat-button][color="primary"]:hover:not(:disabled),
+button[mat-raised-button][color="primary"]:hover:not(:disabled) {
+  box-shadow: 0 8px 24px -4px rgba(30, 58, 138, 0.6) !important;
+  transform: translateY(-1px);
+}
+
+.mat-mdc-raised-button.mat-primary .mat-icon,
+.mat-mdc-unelevated-button.mat-primary .mat-icon,
+.mat-mdc-flat-button.mat-primary .mat-icon,
+button[mat-flat-button][color="primary"] mat-icon,
+button[mat-raised-button][color="primary"] mat-icon {
+  color: #FFFFFF !important;
 }
 
 .mat-mdc-outlined-button {
-  border-width: 2px !important;
-  border-radius: 6px !important;
+  border: 2px solid #1E3A8A !important;
+  border-radius: 8px !important;
   font-weight: 600 !important;
+  color: #1E3A8A !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+  padding: 0.5rem 1.25rem !important;
+}
+
+.mat-mdc-outlined-button .mat-icon,
+.mat-mdc-outlined-button mat-icon {
+  color: #1E3A8A !important;
+}
+
+button[mat-flat-button][color="warn"],
+button[mat-raised-button][color="warn"],
+.mat-mdc-raised-button.mat-warn,
+.mat-mdc-unelevated-button.mat-warn {
+  background: #EF4444 !important;
+  color: #FFFFFF !important;
+}
+
+button[mat-flat-button][color="warn"] mat-icon,
+button[mat-raised-button][color="warn"] mat-icon,
+.mat-mdc-raised-button.mat-warn mat-icon,
+.mat-mdc-unelevated-button.mat-warn mat-icon {
+  color: #FFFFFF !important;
 }
 
 mat-card,
@@ -130,20 +169,25 @@ mat-card,
   font-weight: 500;
   text-decoration: none;
   border-left: 4px solid transparent;
-  border-radius: 0 8px 8px 0;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  border-radius: 0 10px 10px 0;
+  transition: all 0.2s ease;
 }
 
 .sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  background: rgba(59, 130, 246, 0.1);
+  color: #FFFFFF;
+}
+
+.sidebar-item:hover mat-icon {
+  color: #3B82F6;
 }
 
 .sidebar-item-active {
-  background: #1E3A8A !important;
+  background: linear-gradient(90deg, #1E3A8A 0%, #1E40AF 100%) !important;
   border-left-color: #F59E0B !important;
-  color: #fff !important;
+  color: #FFFFFF !important;
   font-weight: 600;
+  box-shadow: 0 4px 16px -4px rgba(30, 58, 138, 0.6);
 }
 
 .sidebar-item mat-icon {
@@ -151,10 +195,12 @@ mat-card,
   width: 22px;
   height: 22px;
   color: var(--icon-c, rgba(255, 255, 255, 0.75));
+  transition: color 0.2s ease;
 }
 
 .sidebar-item-active mat-icon {
-  color: #fff !important;
+  color: #FFFFFF !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .sidebar-seccion-titulo {
@@ -306,60 +352,82 @@ mat-card,
   display: block;
   padding: 1.5rem;
   border-radius: 8px;
-  color: #fff;
+  color: #FFFFFF;
   text-decoration: none;
-  transition: transform 0.15s ease, filter 0.15s ease;
-  cursor: pointer;
-  min-height: 160px;
   position: relative;
   overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  min-height: 160px;
 }
 
 .tile:hover {
   transform: translateY(-3px);
-  filter: brightness(0.92);
+}
+
+/* Paleta reducida: 3 colores con gradiente sutil (5-10%) + glow del propio color */
+.tile-blue {
+  background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+  box-shadow: 0 8px 24px -8px rgba(30, 58, 138, 0.4);
+}
+
+.tile-blue:hover {
+  box-shadow: 0 16px 40px -8px rgba(30, 58, 138, 0.55);
+}
+
+.tile-blue-light {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  box-shadow: 0 8px 24px -8px rgba(59, 130, 246, 0.4);
+}
+
+.tile-blue-light:hover {
+  box-shadow: 0 16px 40px -8px rgba(59, 130, 246, 0.55);
+}
+
+.tile-orange {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  box-shadow: 0 8px 24px -8px rgba(245, 158, 11, 0.4);
+}
+
+.tile-orange:hover {
+  box-shadow: 0 16px 40px -8px rgba(245, 158, 11, 0.55);
 }
 
 .tile .tile-icon {
   width: 56px;
   height: 56px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .tile .tile-icon mat-icon {
   font-size: 32px;
   width: 32px;
   height: 32px;
-  color: #fff;
+  color: #FFFFFF;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
 .tile h3 {
   margin: 0 0 0.25rem;
   font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  color: #fff;
+  letter-spacing: -0.015em;
+  color: #FFFFFF;
 }
 
 .tile p {
   margin: 0;
   font-size: 0.875rem;
-  opacity: 0.9;
-  color: #fff;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
 }
-
-.tile-blue   { background: #1E3A8A; }
-.tile-green  { background: #10B981; }
-.tile-orange { background: #F59E0B; }
-.tile-red    { background: #EF4444; }
-.tile-purple { background: #8B5CF6; }
-.tile-cyan   { background: #06B6D4; }
-.tile-peru   { background: #C8102E; }
 
 /* ---- Flat card (reemplazo de mat-card) ---- */
 .flat-card {
@@ -446,31 +514,50 @@ button.quick-action:hover {
   height: 18px;
 }
 
-/* ---- Header de pagina con barra de color ---- */
+/* ---- Header de pagina: gradiente sutil + glow interno tipo osu! ---- */
 .page-header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.25rem;
-  background: #1E3A8A;
-  border-radius: 8px;
-  color: #fff;
+  padding: 1.5rem 1.75rem;
+  background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+  border-radius: 12px;
+  color: #FFFFFF;
   margin-bottom: 1.5rem;
+  box-shadow: 0 12px 32px -12px rgba(30, 58, 138, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glow interno */
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .page-header .page-header-icon {
   width: 56px;
   height: 56px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
   flex-shrink: 0;
 }
 
 .page-header .page-header-icon mat-icon {
-  color: #fff;
+  color: #FFFFFF;
   font-size: 28px;
   width: 28px;
   height: 28px;
@@ -480,14 +567,17 @@ button.quick-action:hover {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #fff !important;
+  color: #FFFFFF !important;
+  position: relative;
+  z-index: 1;
 }
 
 .page-header p {
   margin: 0.25rem 0 0;
-  font-size: 0.85rem;
-  opacity: 0.85;
-  color: #fff !important;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.85) !important;
+  position: relative;
+  z-index: 1;
 }
 
 .page-header .page-header-text {
@@ -500,31 +590,74 @@ button.quick-action:hover {
   display: flex;
   gap: 0.5rem;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
-/* Botones dentro del header: naranja vibrante sobre azul */
+/* Botones dentro del header: naranja sobre azul, texto blanco */
+.page-header .quick-action {
+  background: #F59E0B;
+  color: #FFFFFF !important;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  box-shadow: 0 4px 16px -4px rgba(245, 158, 11, 0.5);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-header .quick-action:hover {
+  background: #D97706;
+  box-shadow: 0 8px 24px -4px rgba(245, 158, 11, 0.7);
+  transform: translateY(-1px);
+}
+
+.page-header .quick-action mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #FFFFFF;
+}
+
 .page-header .mat-mdc-raised-button,
 .page-header .mat-mdc-unelevated-button,
 .page-header .mat-mdc-flat-button {
-  background-color: #F59E0B !important;
-  color: #fff !important;
-  border-radius: 6px !important;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+  color: #FFFFFF !important;
+  border-radius: 8px !important;
   font-weight: 700 !important;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  box-shadow: none !important;
+  box-shadow: 0 4px 16px -4px rgba(245, 158, 11, 0.5) !important;
 }
 
 .page-header .mat-mdc-raised-button:hover,
 .page-header .mat-mdc-unelevated-button:hover,
 .page-header .mat-mdc-flat-button:hover {
-  background-color: #D97706 !important;
+  background: #D97706 !important;
+  box-shadow: 0 8px 24px -4px rgba(245, 158, 11, 0.7) !important;
+}
+
+.page-header .mat-mdc-raised-button mat-icon,
+.page-header .mat-mdc-unelevated-button mat-icon,
+.page-header .mat-mdc-flat-button mat-icon {
+  color: #FFFFFF !important;
 }
 
 .page-header .mat-mdc-outlined-button {
   border-color: rgba(255, 255, 255, 0.6) !important;
-  color: #fff !important;
+  color: #FFFFFF !important;
   border-width: 2px !important;
-  border-radius: 6px !important;
+  border-radius: 8px !important;
   font-weight: 600 !important;
+}
+
+.page-header .mat-mdc-outlined-button mat-icon {
+  color: #FFFFFF !important;
 }
