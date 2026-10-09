@@ -1,7 +1,7 @@
 <mat-sidenav-container class="app-container">
   <mat-sidenav [opened]="sidebarOpen()" mode="side" class="app-sidebar">
     <div class="flex items-center gap-3 px-6 py-6 border-b border-white/10">
-      <div class="flex items-center justify-center w-11 h-11 rounded-xl bg-[#C8102E] text-white font-bold text-lg shadow-lg shrink-0">
+      <div class="flex items-center justify-center w-11 h-11 rounded-lg bg-[#C8102E] text-white font-bold text-lg shrink-0">
         E
       </div>
       <div class="min-w-0">
@@ -12,19 +12,19 @@
 
     <nav class="flex-1 overflow-y-auto py-4">
       <div class="px-3 mb-2">
-        <a routerLink="/dashboard" routerLinkActive="sidebar-item-active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-item">
+        <a routerLink="/dashboard" routerLinkActive="sidebar-item-active" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-item" style="--icon-c: #F59E0B">
           <mat-icon>dashboard</mat-icon>
           <span>Dashboard</span>
         </a>
       </div>
 
       @for (seccion of menuFiltrado(); track seccion.titulo) {
-        <div class="px-6 py-2 mt-3 text-[11px] font-semibold text-white/40 uppercase tracking-wider first:mt-0">
+        <div class="sidebar-seccion-titulo">
           {{ seccion.titulo }}
         </div>
         <div class="px-0 space-y-0.5">
           @for (item of seccion.items; track item.url) {
-            <a [routerLink]="item.url" routerLinkActive="sidebar-item-active" [routerLinkActiveOptions]="{ exact: item.exact ?? false }" class="sidebar-item">
+            <a [routerLink]="item.url" routerLinkActive="sidebar-item-active" [routerLinkActiveOptions]="{ exact: item.exact ?? false }" class="sidebar-item" [style.--icon-c]="item.color">
               <mat-icon>{{ item.icon }}</mat-icon>
               <span>{{ item.label }}</span>
             </a>
