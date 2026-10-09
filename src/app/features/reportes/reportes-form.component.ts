@@ -96,7 +96,6 @@ import type { Grado } from '../../core/models/grado.model';
     </mat-card>
   `,
   styles: [`
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     .card { max-width: 600px; }
     .full-width { width: 100%; margin-bottom: 1rem; }
     .actions { display: flex; justify-content: flex-end; gap: 0.5rem; }

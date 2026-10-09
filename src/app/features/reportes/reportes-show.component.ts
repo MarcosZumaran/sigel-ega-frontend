@@ -44,7 +44,6 @@ import type { Reporte } from '../../core/models/reporte.model';
     }
   `,
   styles: [`
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.75rem; }
     .center { display: flex; justify-content: center; padding: 2rem; }
     .hint { color: #64748b; text-align: center; }

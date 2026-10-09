@@ -110,7 +110,6 @@ import { DialogService } from '../../core/services/dialog.service';
     </mat-card>
   `,
   styles: [`
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     .filter-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
     .filters { margin-bottom: 1rem; }
     .full-width { width: 100%; }
