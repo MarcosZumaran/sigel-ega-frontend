@@ -23,7 +23,7 @@ import { Nivel } from '../../core/models/catalogos.model';
 import { Grado } from '../../core/models/grado.model';
 import { Seccion } from '../../core/models/seccion.model';
 
-const PUNTOS: Record<string, number> = { AD: 4, A: 3, B: 2, C: 1 };
+const PUNTOS: Record<string, number> = { AD: 4, A: 3, B: 2.5, C: 1 };
 
 export interface FilaSabana {
   matricula: Matricula;

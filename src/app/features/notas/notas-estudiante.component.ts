@@ -19,7 +19,7 @@ import type { Estudiante } from '../../core/models/estudiante.model';
 import type { Calificacion, NivelLogro } from '../../core/models/calificacion.model';
 import type { Bimestre } from '../../core/models/bimestre.model';
 
-const NIVEL_NUM: Record<string, number> = { AD: 4, A: 3, B: 2, C: 1 };
+const NIVEL_NUM: Record<string, number> = { AD: 4, A: 3, B: 2.5, C: 1 };
 
 interface BimestreCard {
   id: number;
