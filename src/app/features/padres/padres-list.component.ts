@@ -84,9 +84,6 @@ import { ModuleHomeComponent } from '../../shared/components/module-home.compone
     </mat-card>
   `,
   styles: [`
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .page-header h1 { margin: 0; color: #1E3A8A; }
-    .page-header p { margin: 0.25rem 0 0; color: #64748b; }
     .search { width: 100%; max-width: 420px; }
     .full-width { width: 100%; }
     .loading { display: flex; justify-content: center; padding: 2rem; }

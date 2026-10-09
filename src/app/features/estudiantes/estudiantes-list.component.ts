@@ -24,8 +24,14 @@ import { ModuleHomeComponent } from '../../shared/components/module-home.compone
   imports: [ReactiveFormsModule, RouterLink, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatProgressSpinnerModule, MatSnackBarModule, MatCardModule, ModuleHomeComponent],
   template: `
     <div class="page-header">
-      <h1>Estudiantes</h1>
-      <a mat-raised-button color="primary" routerLink="create"><mat-icon>add</mat-icon>Nuevo estudiante</a>
+      <div class="page-header-icon"><mat-icon>school</mat-icon></div>
+      <div class="page-header-text">
+        <h1>Estudiantes</h1>
+        <p>Lista de estudiantes registrados en la IE</p>
+      </div>
+      <div class="page-header-actions">
+        <a mat-raised-button color="primary" routerLink="create"><mat-icon>add</mat-icon>Nuevo estudiante</a>
+      </div>
     </div>
     <app-module-home moduleName="Estudiantes"
       [actions]="[{label: 'Nuevo estudiante', icon: 'add', link: 'create'}, {label: 'Matricular', icon: 'app_registration', link: '/matriculas/create'}]"
@@ -87,8 +93,6 @@ import { ModuleHomeComponent } from '../../shared/components/module-home.compone
     </mat-card>
   `,
   styles: [`
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .page-header h1 { margin: 0; color: #1E3A8A; }
     .search { width: 100%; max-width: 420px; }
     .full-width { width: 100%; }
     .loading { display: flex; justify-content: center; padding: 2rem; }
